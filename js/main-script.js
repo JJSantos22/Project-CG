@@ -31,10 +31,10 @@ function createFrontCamera(){
     const width = window.innerWidth;
     const height = window.innerHeight;
     camera[0] = new THREE.OrthographicCamera(
-    width / -10, // Left
-    width / 10,  // Right
-    height / 10, // Top
-    height / -10, // Bottom
+    width / -7.5, // Left
+    width / 7.5,  // Right
+    height / 7.5, // Top
+    height / -7.5, // Bottom
     1, 1000 // Near and far planes
     );
     camera[0].position.set(0, 0, -100); // Adjust the position to fit your desired view
@@ -45,10 +45,10 @@ function createLateralCamera(){
     const width = window.innerWidth;
     const height = window.innerHeight;
     camera[1] = new THREE.OrthographicCamera(
-    width / -10, // Left
-    width / 10,  // Right
-    height / 10, // Top
-    height / -10, // Bottom
+    width / -7.5, // Left
+    width / 7.5,  // Right
+    height / 7.5, // Top
+    height / -7.5, // Bottom
     1, 1000 // Near and far planes
     );
     camera[1].position.set(100, 0, 0); // Adjust the position to fit your desired view
@@ -59,10 +59,10 @@ function createTopCamera(){
     const width = window.innerWidth;
     const height = window.innerHeight;
     camera[2] = new THREE.OrthographicCamera(
-    width / -10, // Left
-    width / 10,  // Right
-    height / 10, // Top
-    height / -10, // Bottom
+    width / -7.5, // Left
+    width / 7.5,  // Right
+    height / 7.5, // Top
+    height / -7.5, // Bottom
     1, 1000 // Near and far planes
     );
     camera[2].position.set(0, 100, 0); // Adjust the position to fit your desired view
@@ -75,9 +75,9 @@ function createPerspectiveCamera() {
                                          window.innerWidth / window.innerHeight,
                                          1,
                                          1000);
-    camera[3].position.x = -50;
-    camera[3].position.y = 50;
-    camera[3].position.z = -50;
+    camera[3].position.x = -100;
+    camera[3].position.y = 100;
+    camera[3].position.z = -100;
     camera[3].lookAt(scene.position);
 }
 
@@ -85,13 +85,13 @@ function createOrtographicCamera(){
     const width = window.innerWidth;
     const height = window.innerHeight;
     camera[4] = new THREE.OrthographicCamera(
-    width / -10, // Left
-    width / 10,  // Right
-    height / 10, // Top
-    height / -10, // Bottom
+    width / -7.5, // Left
+    width / 7.5,  // Right
+    height / 7.5, // Top
+    height / -7.5, // Bottom
     1, 1000 // Near and far planes
     );
-    camera[4].position.set(-50, 60, -50); // Adjust the position to fit your desired view
+    camera[4].position.set(-100, 150, -100); // Adjust the position to fit your desired view
     camera[4].lookAt(scene.position);
 
 }
@@ -230,7 +230,7 @@ function animate() {
 function onResize() { 
     'use strict';
 
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    //renderer.setSize(window.innerWidth, window.innerHeight);
 
     /* if (window.innerHeight > 0 && window.innerWidth > 0) {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -400,6 +400,13 @@ function addHead(obj, x, y, z) {
     left_antena.position.set(x - 7.5, y + 7.5 + 25 + 40 + 20 + 5, z + 10);
     obj.add(right_antena);
     obj.add(left_antena);
+    geometry = new THREE.PlaneGeometry(5, 5);
+    var left_eye = new THREE.Mesh(geometry, material);
+    var right_eye = new THREE.Mesh(geometry, material);
+    left_eye.position.set(x - 2.5, y + 7.5 + 25 + 40 + 10 + 2.5, z - 5);
+    right_eye.position.set(x + 2.5, y + 7.5 + 25 + 40 + 10 + 2.5, z - 5);
+    obj.add(left_eye);
+    obj.add(right_eye);
 }
 
 function addUpperArms(obj, x, y, z) {
