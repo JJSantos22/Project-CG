@@ -18,6 +18,9 @@ function createScene() {
     scene.add(new THREE.AxisHelper(10));
     
     createTorso(0, 0, 0);
+    createLegs(0, 0, 0);
+    createHead(0, 0, 0);
+    createArms(0, 0, 0);
 
 }
 
@@ -72,9 +75,9 @@ function createPerspectiveCamera() {
                                          window.innerWidth / window.innerHeight,
                                          1,
                                          1000);
-    camera[3].position.x = 50;
+    camera[3].position.x = -50;
     camera[3].position.y = 50;
-    camera[3].position.z = 50;
+    camera[3].position.z = -50;
     camera[3].lookAt(scene.position);
 }
 
@@ -88,7 +91,7 @@ function createOrtographicCamera(){
     height / -10, // Bottom
     1, 1000 // Near and far planes
     );
-    camera[4].position.set(50, 60, 50); // Adjust the position to fit your desired view
+    camera[4].position.set(-50, 60, -50); // Adjust the position to fit your desired view
     camera[4].lookAt(scene.position);
 
 }
@@ -227,6 +230,12 @@ function animate() {
 function onResize() { 
     'use strict';
 
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    /* if (window.innerHeight > 0 && window.innerWidth > 0) {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+    } */
 }
 
 ///////////////////////
@@ -278,4 +287,154 @@ function createTorso(x, y, z) {
     addWheels(torso, x, y, z);
 
     scene.add(torso);
+}
+
+function createLegs(x, y, z) {
+    'use strict';
+
+    var legs = new THREE.Object3D();
+
+    material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+
+    addThighs(legs, x, y, z);
+    addShins(legs, x, y, z);
+    addLegWheels(legs, x, y, z);
+    addFeet(legs, x, y, z);
+
+    scene.add(legs);
+}
+
+function createHead(x, y, z) {
+    'use strict';
+
+    var head = new THREE.Object3D();
+
+    material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+
+    addHead(head, x, y, z);
+
+    scene.add(head);
+}
+
+function createArms(x, y, z) {
+    'use strict';
+
+    var arms = new THREE.Object3D();
+
+    material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+
+    addUpperArms(arms, x, y, z);
+    addExhaustPipe(arms, x, y, z);
+    addForearms(arms, x, y, z);
+
+    scene.add(arms);
+}
+
+function addThighs(obj, x, y, z) {
+    'use strict';
+
+    geometry = new THREE.BoxGeometry(10, 30, 10);
+    var left_thigh = new THREE.Mesh(geometry, material);
+    var right_thigh = new THREE.Mesh(geometry, material);
+    left_thigh.position.set(x - 12.5 - 2.5, y - 7.5 - 15, z);
+    right_thigh.position.set(x + 12.5 + 2.5, y - 7.5 - 15, z);
+    obj.add(left_thigh);
+    obj.add(right_thigh);
+}
+
+function addShins(obj, x, y, z) {
+    'use strict';
+
+    geometry = new THREE.BoxGeometry(20, 70, 20);
+    var left_shin = new THREE.Mesh(geometry, material);
+    var right_shin = new THREE.Mesh(geometry, material);
+    left_shin.position.set(x - 12.5 - 2.5, y - 7.5 - 30 - 35, z);
+    right_shin.position.set(x + 12.5 + 2.5, y - 7.5 - 30 - 35, z);
+    obj.add(left_shin);
+    obj.add(right_shin);
+}
+
+function addLegWheels(obj, x, y, z) {
+    geometry = new THREE.CylinderGeometry(10, 10, 15, 32);
+    var left_wheel1 = new THREE.Mesh(geometry, material);
+    var right_wheel1 = new THREE.Mesh(geometry, material);
+    var left_wheel2 = new THREE.Mesh(geometry, material);
+    var right_wheel2 = new THREE.Mesh(geometry, material);
+    left_wheel1.rotation.z=Math.PI/2;
+    right_wheel1.rotation.z=Math.PI/2;
+    left_wheel2.rotation.z=Math.PI/2;
+    right_wheel2.rotation.z=Math.PI/2;
+    left_wheel1.position.set(x - 25 - 7.5, y - 7.5 - 30 - 25 - 5, z - 5);
+    right_wheel1.position.set(x + 25 + 7.5, y - 7.5 - 30 - 25 - 5, z - 5);
+    left_wheel2.position.set(x - 25 - 7.5, y - 7.5 - 30 - 70 + 10 + 5, z - 5);
+    right_wheel2.position.set(x + 25 + 7.5, y - 7.5 - 30 - 70 + 10 + 5, z - 5);
+    obj.add(left_wheel1);
+    obj.add(right_wheel1);
+    obj.add(left_wheel2);
+    obj.add(right_wheel2);
+}
+
+function addFeet(obj, x, y, z) {
+    'use strict';
+
+    geometry = new THREE.BoxGeometry(20, 20, 20);
+    var left_foot = new THREE.Mesh(geometry, material);
+    var right_foot = new THREE.Mesh(geometry, material);
+    left_foot.position.set(x - 12.5 - 2.5, y - 7.5 - 30 - 70 + 10, z - 10 - 10);
+    right_foot.position.set(x + 12.5 + 2.5, y - 7.5 - 30 - 70 +10, z - 10 - 10);
+    obj.add(left_foot);
+    obj.add(right_foot);
+}
+
+function addHead(obj, x, y, z) {
+    'use strict';
+
+    geometry = new THREE.BoxGeometry(20, 20, 20);
+    var head = new THREE.Mesh(geometry, material);
+    head.position.set(x, y + 7.5 + 25 + 40 + 10, z + 5);
+    obj.add(head);
+    geometry = new THREE.BoxGeometry(5, 10, 10);
+    var right_antena = new THREE.Mesh(geometry, material);
+    var left_antena = new THREE.Mesh(geometry, material);
+    right_antena.position.set(x + 7.5, y + 7.5 + 25 + 40 + 20 + 5, z + 10);
+    left_antena.position.set(x - 7.5, y + 7.5 + 25 + 40 + 20 + 5, z + 10);
+    obj.add(right_antena);
+    obj.add(left_antena);
+}
+
+function addUpperArms(obj, x, y, z) {
+    'use strict';
+
+    geometry = new THREE.BoxGeometry(40, 40, 20);
+    var left_upper_arm = new THREE.Mesh(geometry, material);
+    var right_upper_arm = new THREE.Mesh(geometry, material);
+    left_upper_arm.position.set(x - 15 - 20, y + 7.5 + 25 + 20, z + 15 + 10);
+    right_upper_arm.position.set(x + 15 + 20, y + 7.5 + 25 + 20, z + 15 + 10);
+    obj.add(left_upper_arm);
+    obj.add(right_upper_arm);
+    
+}
+
+function addExhaustPipe(obj, x, y, z){
+    'use strict';
+
+    geometry = new THREE.CylinderGeometry(2.5, 2.5, 50, 32);
+    var left_exhaust_pipe = new THREE.Mesh(geometry, material);
+    var right_exhaust_pipe = new THREE.Mesh(geometry, material);
+    left_exhaust_pipe.position.set(x - 40 - 15 - 2.5, y + 7.5 + 25 + 20 + 5, z + 15 + 10 + 2.5);
+    right_exhaust_pipe.position.set(x + 40 + 15 + 2.5, y + 7.5 + 25 + 20 + 5, z + 15 + 10 + 2.5);
+    obj.add(left_exhaust_pipe);
+    obj.add(right_exhaust_pipe);
+}
+
+function addForearms(obj, x, y, z) {
+    'use strict';
+
+    geometry = new THREE.BoxGeometry(15, 15, 50);
+    var left_forearm = new THREE.Mesh(geometry, material);
+    var right_forearm = new THREE.Mesh(geometry, material);
+    left_forearm.position.set(x - 40 - 7.5, y + 7.5 + 25 - 7.5, z + 10);
+    right_forearm.position.set(x + 40 + 7.5, y + 7.5 + 25 - 7.5, z + 10);
+    obj.add(left_forearm);
+    obj.add(right_forearm);
 }
