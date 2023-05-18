@@ -4,7 +4,7 @@
 var scene, renderer;
 var camera = new Array(5);
 var active_camera = 3;
-
+var geometry, material, mesh;
 
 /////////////////////
 /* CREATE SCENE(S) */
@@ -16,6 +16,8 @@ function createScene() {
 
 
     scene.add(new THREE.AxisHelper(10));
+    
+    createTorso(0, 0, 0);
 
 }
 
@@ -100,6 +102,53 @@ function createOrtographicCamera(){
 ////////////////////////
 /* CREATE OBJECT3D(S) */
 ////////////////////////
+function addWaist(obj, x, y, z) {
+    'use strict';
+
+    geometry = new THREE.BoxGeometry(50, 15, 30);
+    mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(x, y, z);
+    obj.add(mesh);
+}
+
+function addAbdomen(obj, x, y, z) {
+    'use strict';
+
+    geometry = new THREE.BoxGeometry(50, 25, 30);
+    mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(x, y + 7.5 + 12.5, z);
+    obj.add(mesh);
+}
+
+function addPectorals(obj, x, y, z) {
+    'use strict';
+
+    geometry = new THREE.BoxGeometry(80, 40, 30);
+    mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(x, y + 7.5 + 25 + 20, z);
+    obj.add(mesh);
+    geometry = new THREE.PlaneGeometry(30, 15);
+    var left_pectoral = new THREE.Mesh(geometry, material);
+    var right_pectoral = new THREE.Mesh(geometry, material);
+    left_pectoral.position.set(x - 20, y + 7.5 + 25 + 20 + 7.5, z - 15);
+    right_pectoral.position.set(x + 20, y + 7.5 + 25 + 20 + 7.5, z - 15);
+    obj.add(left_pectoral);
+    obj.add(right_pectoral);
+}
+
+function addWheels(obj, x, y, z) {
+    'use strict';
+
+    geometry = new THREE.CylinderGeometry(10, 10, 15, 32);
+    var left_wheel = new THREE.Mesh(geometry, material);
+    var right_wheel = new THREE.Mesh(geometry, material);
+    left_wheel.rotation.z=Math.PI/2;
+    right_wheel.rotation.z=Math.PI/2;
+    left_wheel.position.set(x - 25 - 7.5, y - 2.5, z);
+    right_wheel.position.set(x + 25 + 7.5, y - 2.5, z);
+    obj.add(left_wheel);
+    obj.add(right_wheel);
+}
 
 //////////////////////
 /* CHECK COLLISIONS */
@@ -214,4 +263,19 @@ function onKeyUp(e){
 
 function switch_camera(number) {
 	active_camera = number;
+}
+
+function createTorso(x, y, z) {
+    'use strict';
+
+    var torso = new THREE.Object3D();
+
+    material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+
+    addWaist(torso, x, y, z);
+    addAbdomen(torso, x, y, z);
+    addPectorals(torso, x, y, z);
+    addWheels(torso, x, y, z);
+
+    scene.add(torso);
 }
