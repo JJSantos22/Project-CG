@@ -32,6 +32,7 @@ var rotationAngleFeet = 0;
 var positionArms = 0;
 var maxRotationAngleHead = Math.PI;
 var maxRotationAngleLegs = -Math.PI/2;
+var maxRotationAngleFeet = -Math.PI;
 
 
 
@@ -313,14 +314,29 @@ function onKeyDown(e) {
     
             // Q -Feet
         case 81:
+            if (rotationAngleFeet <= 0 && rotationAngleFeet >= maxRotationAngleFeet){
             rotationAngleFeet += rotationSpeed; // Increase the rotation angle
             console.log(rotationAngleFeet);
-            break;
+            break;  
+            }
+            else if(rotationAngleFeet > 0) {
+                rotationAngleFeet = 0;
+                console.log(rotationAngleFeet);
+                break; 
+            }
         // A - Feet
         case 65:
+            if (rotationAngleFeet <= 0 && rotationAngleFeet >= maxRotationAngleFeet){
             rotationAngleFeet -= rotationSpeed;
             console.log(rotationAngleFeet); // Decrease the rotation angle
-            break;
+            break;    
+            }
+            else if (rotationAngleFeet < maxRotationAngleFeet){
+                rotationAngleFeet = maxRotationAngleFeet;
+                console.log(rotationAngleFeet);
+                break;
+            }
+            
         // W - Legs
         case 87:
             if (rotationAngleLegs <= 0 && rotationAngleLegs >= maxRotationAngleLegs){
@@ -363,7 +379,7 @@ function onKeyDown(e) {
                 break;
             }
             else if(rotationAngleHead > maxRotationAngleHead) {
-                rotationAngleHead = maxRotationAngle;
+                rotationAngleHead = maxRotationAngleHead;
                 console.log(rotationAngleHead);
                 break;
             }
