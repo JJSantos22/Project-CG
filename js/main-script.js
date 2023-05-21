@@ -33,6 +33,7 @@ var positionArms = 0;
 var maxRotationAngleHead = Math.PI;
 var maxRotationAngleLegs = -Math.PI/2;
 var maxRotationAngleFeet = -Math.PI;
+var maxTranslationArms = 15;
 
 
 
@@ -314,24 +315,24 @@ function onKeyDown(e) {
     
             // Q -Feet
         case 81:
-            if (rotationAngleFeet <= 0 && rotationAngleFeet >= maxRotationAngleFeet){
+            if (rotationAngleFeet < 0 && rotationAngleFeet >= maxRotationAngleFeet){
             rotationAngleFeet += rotationSpeed; // Increase the rotation angle
             console.log(rotationAngleFeet);
             break;  
             }
-            else if(rotationAngleFeet > 0) {
+            else if(rotationAngleFeet >= 0) {
                 rotationAngleFeet = 0;
                 console.log(rotationAngleFeet);
                 break; 
             }
         // A - Feet
         case 65:
-            if (rotationAngleFeet <= 0 && rotationAngleFeet >= maxRotationAngleFeet){
+            if (rotationAngleFeet <= 0 && rotationAngleFeet > maxRotationAngleFeet){
             rotationAngleFeet -= rotationSpeed;
             console.log(rotationAngleFeet); // Decrease the rotation angle
             break;    
             }
-            else if (rotationAngleFeet < maxRotationAngleFeet){
+            else if (rotationAngleFeet <= maxRotationAngleFeet){
                 rotationAngleFeet = maxRotationAngleFeet;
                 console.log(rotationAngleFeet);
                 break;
@@ -339,53 +340,69 @@ function onKeyDown(e) {
             
         // W - Legs
         case 87:
-            if (rotationAngleLegs <= 0 && rotationAngleLegs >= maxRotationAngleLegs){
+            if (rotationAngleLegs < 0 && rotationAngleLegs >= maxRotationAngleLegs){
                 rotationAngleLegs += rotationSpeed; // Increase the rotation angle
                 console.log(rotationAngleLegs);
                 break;
             }
-            else if(rotationAngleLegs > 0){
+            else if(rotationAngleLegs >= 0){
                 rotationAngleLegs = 0;
                 console.log(rotationAngleLegs);
                 break;
             }
         // S - Legs
         case 83:
-            if (rotationAngleLegs <= 0 && rotationAngleLegs >= maxRotationAngleLegs) {
+            if (rotationAngleLegs <= 0 && rotationAngleLegs > maxRotationAngleLegs) {
                 rotationAngleLegs -= rotationSpeed;
                 console.log(rotationAngleLegs); // Decrease the rotation angle
                 break; 
             }
-            else if (rotationAngleLegs < maxRotationAngleLegs){
+            else if (rotationAngleLegs <= maxRotationAngleLegs){
                 rotationAngleLegs = maxRotationAngleLegs;
                 console.log(rotationAngleLegs);
                 break;
             }
+            break;
         //  E - Arms
         case 69 :
-            positionArms -= translationSpeed;
-            console.log(rotationAngleLegs); // Decrease the rotation angle
-            break;
+            if (positionArms > 0 && positionArms <= maxTranslationArms) {
+                positionArms -= translationSpeed;
+                console.log(positionArms); // Decrease the rotation angle
+                break;
+            }
+            else if (positionArms <= 0){
+                positionArms = 0;
+                console.log(positionArms);
+                break;
+            }
         // D - Arms
         case 68:
-            positionArms += translationSpeed;
-            console.log(rotationAngleLegs); // Increase the rotation angle
+            if (positionArms >= 0 && positionArms < maxTranslationArms) {
+                positionArms += translationSpeed;
+                console.log(positionArms); // Increase the rotation angle
+                break;
+            }
+            else if (positionArms >= maxTranslationArms){
+                positionArms = maxTranslationArms;
+                console.log(positionArms);
+                break;
+            }
             break;
         // R - Head
         case 82:
-            if( rotationAngleHead >= 0 && rotationAngleHead <= maxRotationAngleHead) {
+            if( rotationAngleHead >= 0 && rotationAngleHead < maxRotationAngleHead) {
                 rotationAngleHead += rotationSpeed;
                 console.log(rotationAngleHead); // Increase the rotation angle
                 break;
             }
-            else if(rotationAngleHead > maxRotationAngleHead) {
+            else if(rotationAngleHead >= maxRotationAngleHead) {
                 rotationAngleHead = maxRotationAngleHead;
                 console.log(rotationAngleHead);
                 break;
             }
         // F - Head
         case 70:
-            if( rotationAngleHead <= maxRotationAngleHead && rotationAngleHead >= 0){
+            if( rotationAngleHead <= maxRotationAngleHead && rotationAngleHead > 0){
                 rotationAngleHead -= rotationSpeed;
                 console.log(rotationAngleHead); // Decrease the rotation angle
                 break;
