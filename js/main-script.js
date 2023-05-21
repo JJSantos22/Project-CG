@@ -24,12 +24,13 @@ var arm_axis2;
 
 
 // Set the initial rotation angles
-var rotationSpeed = 0.02;
+var rotationSpeed = 0.01;
 var translationSpeed = 0.2;
 var rotationAngleHead = 0;
 var rotationAngleLegs = 0;
 var rotationAngleFeet = 0;
 var positionArms = 0;
+var maxRotationAngle = Math.PI;
 
 
 
@@ -337,18 +338,32 @@ function onKeyDown(e) {
         // D - Arms
         case 68:
             positionArms += translationSpeed;
-            console.log(rotationAngleLegs); // Decrease the rotation angle
+            console.log(rotationAngleLegs); // Increase the rotation angle
             break;
         // R - Head
         case 82:
-            rotationAngleHead += rotationSpeed;
-            console.log(rotationAngleLegs); // Decrease the rotation angle
-            break;
+            if( rotationAngleHead >= 0 && rotationAngleHead <= maxRotationAngle) {
+                rotationAngleHead += rotationSpeed;
+                console.log(rotationAngleHead); // Increase the rotation angle
+                break;
+            }
+            else if(rotationAngleHead > maxRotationAngle) {
+                rotationAngleHead = maxRotationAngle;
+                console.log(rotationAngleHead);
+                break;
+            }
         // F - Head
         case 70:
-            rotationAngleHead -= rotationSpeed;
-            console.log(rotationAngleLegs); // Decrease the rotation angle
-            break;   
+            if( rotationAngleHead <= maxRotationAngle && rotationAngleHead >= 0){
+                rotationAngleHead -= rotationSpeed;
+                console.log(rotationAngleHead); // Decrease the rotation angle
+                break;
+            }
+            else if (rotationAngleHead < 0){
+                rotationAngleHead = 0;
+                console.log(rotationAngleHead);
+                break;
+            }   
     }
 
 }
