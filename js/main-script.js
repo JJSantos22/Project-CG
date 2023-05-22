@@ -11,7 +11,9 @@ var grey = new THREE.MeshBasicMaterial({ color: 0x6C6C6C, wireframe: true });
 var black = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true });
 var blue = new THREE.MeshBasicMaterial({ color: 0x0000FF, wireframe: true });
 var red = new THREE.MeshBasicMaterial({ color: 0xFF0000, wireframe: true });
-var elements = new Array(robot_elements);
+var robot_array = new Array(robot_elements);
+var trailer_array = new Array(trailer_elements);
+
 
 var trailer;
 
@@ -24,7 +26,7 @@ var arm_axis2;
 
 
 // Set the initial rotation angles
-var rotationSpeed = 0.01;
+var rotationSpeed = 0.02;
 var translationSpeed = 0.2;
 var rotationAngleHead = 0;
 var rotationAngleLegs = 0;
@@ -51,11 +53,11 @@ function createScene() {
     scene.add(main_axis);
 
     
-    createTorso(0, 0, 0);
-    createLegs(0, 0, 0);
-    createHead(0, 0, 0);
-    createArms(0, 0, 0);
-    /* createTrailer(0, 0, 0); */
+    createTorso(0, 12.5, 0);
+    createLegs(0, 12.5, 0);
+    createHead(0, 12.5, 0);
+    createArms(0, 12.5, 0);
+    createTrailer(0, 0, 150); 
 
 }
 
@@ -147,7 +149,7 @@ function addWaist(obj, x, y, z) {
     mesh = new THREE.Mesh(geometry, red);
     mesh.position.set(x, y, z);
     obj.add(mesh);
-    elements[0] = mesh;
+    robot_array[0] = mesh;
 }
 
 function addAbdomen(obj, x, y, z) {
@@ -157,7 +159,7 @@ function addAbdomen(obj, x, y, z) {
     mesh = new THREE.Mesh(geometry, red);
     mesh.position.set(x, y + 7.5 + 12.5, z);
     obj.add(mesh);
-    elements[1] = mesh;
+    robot_array[1] = mesh;
 }
 
 function addPectorals(obj, x, y, z) {
@@ -167,7 +169,7 @@ function addPectorals(obj, x, y, z) {
     mesh = new THREE.Mesh(geometry, red);
     mesh.position.set(x, y + 7.5 + 25 + 20, z);
     obj.add(mesh);
-    elements[2] = mesh;
+    robot_array[2] = mesh;
     geometry = new THREE.PlaneGeometry(30, 15);
     var left_pectoral = new THREE.Mesh(geometry, grey);
     var right_pectoral = new THREE.Mesh(geometry, grey);
@@ -175,8 +177,8 @@ function addPectorals(obj, x, y, z) {
     right_pectoral.position.set(x + 20, y + 7.5 + 25 + 20 + 7.5, z - 15);
     obj.add(left_pectoral);
     obj.add(right_pectoral);
-    elements[3] = left_pectoral;
-    elements[4] = right_pectoral;
+    robot_array[3] = left_pectoral;
+    robot_array[4] = right_pectoral;
 }
 
 function addWheels(obj, x, y, z) {
@@ -191,8 +193,8 @@ function addWheels(obj, x, y, z) {
     right_wheel.position.set(x + 25 + 7.5, y - 2.5, z);
     obj.add(left_wheel);
     obj.add(right_wheel);
-    elements[5] = left_wheel;
-    elements[6] = right_wheel;
+    robot_array[5] = left_wheel;
+    robot_array[6] = right_wheel;
 }
 
 //////////////////////
@@ -452,7 +454,7 @@ function createLegs(x, y, z) {
     material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 
     foot_axis = new THREE.Object3D();
-    foot_axis.position.set(x,y - 30 - 70 -7.5-2.5, z - 10);
+    foot_axis.position.set(x,y - 30 - 70 - 7.5 - 2.5, z - 10);
     leg_axis.add(foot_axis);
     var axis_helper = new THREE.AxisHelper(10); // Adjust the size of the AxisHelper as needed
     foot_axis.add(axis_helper);
@@ -513,8 +515,8 @@ function addThighs(axis, x, y, z) {
     right_thigh.position.set(x + 12.5 + 2.5, y - 15-7.5-2.5, z);
     axis.add(left_thigh);
     axis.add(right_thigh);
-    elements[7] = left_thigh;
-    elements[8] = right_thigh;
+    robot_array[7] = left_thigh;
+    robot_array[8] = right_thigh;
 }
 
 function addShins(axis, x, y, z) {
@@ -527,8 +529,8 @@ function addShins(axis, x, y, z) {
     right_shin.position.set(x + 12.5 + 2.5, y - 30 - 35-7.5-2.5, z);
     axis.add(left_shin);
     axis.add(right_shin);
-    elements[9] = left_shin;
-    elements[10] = right_shin;
+    robot_array[9] = left_shin;
+    robot_array[10] = right_shin;
 }
 
 function addLegWheels(axis, x, y, z) {
@@ -549,10 +551,10 @@ function addLegWheels(axis, x, y, z) {
     axis.add(right_wheel1);
     axis.add(left_wheel2);
     axis.add(right_wheel2);
-    elements[11] = left_wheel1;
-    elements[12] = right_wheel1;
-    elements[13] = left_wheel2;
-    elements[14] = right_wheel2;
+    robot_array[11] = left_wheel1;
+    robot_array[12] = right_wheel1;
+    robot_array[13] = left_wheel2;
+    robot_array[14] = right_wheel2;
 }
 
 function addFeet(axis, x, y, z) {
@@ -565,8 +567,8 @@ function addFeet(axis, x, y, z) {
     right_foot.position.set(x + 12.5 + 2.5, y + 10, z - 10);
     axis.add(left_foot);
     axis.add(right_foot);
-    elements[15] = left_foot;
-    elements[16] = right_foot;
+    robot_array[15] = left_foot;
+    robot_array[16] = right_foot;
 }
 
 function addHead(axis, x, y, z) {
@@ -578,7 +580,7 @@ function addHead(axis, x, y, z) {
     var head_mesh = new THREE.Mesh(geometry, blue);
     head_mesh.position.set(0, 10, 0); // Adjust the position relative to the head axis
     axis.add(head_mesh);
-    elements[17] = head_mesh;
+    robot_array[17] = head_mesh;
   
     // Create the right and left antennas
     geometry = new THREE.BoxGeometry(5, 10, 10);
@@ -590,8 +592,8 @@ function addHead(axis, x, y, z) {
     axis.add(left_antena);
   
     // Create the left and right eyes
-    elements[18] = right_antena;
-    elements[19] = left_antena;
+    robot_array[18] = right_antena;
+    robot_array[19] = left_antena;
     geometry = new THREE.PlaneGeometry(5, 5);
     var left_eye = new THREE.Mesh(geometry, grey);
     var right_eye = new THREE.Mesh(geometry, grey);
@@ -601,8 +603,8 @@ function addHead(axis, x, y, z) {
     axis.add(right_eye);
   
    
-      elements[20] = left_eye;
-    elements[21] = right_eye;
+    robot_array[20] = left_eye;
+    robot_array[21] = right_eye;
 }
 
 function addUpperArms(axis1,axis2, x, y, z) {
@@ -615,8 +617,8 @@ function addUpperArms(axis1,axis2, x, y, z) {
     right_upper_arm.position.set(x + 15 + 20, y + 20, z + 15 + 10);
     axis1.add(left_upper_arm);
     axis2.add(right_upper_arm);
-    elements[22] = left_upper_arm;
-    elements[23] = right_upper_arm;
+    robot_array[22] = left_upper_arm;
+    robot_array[23] = right_upper_arm;
     
 }
 
@@ -630,8 +632,8 @@ function addExhaustPipe(axis1,axis2, x, y, z){
     right_exhaust_pipe.position.set(x + 40 + 15 + 2.5, y + 20 + 5, z + 15 + 10 + 2.5);
     axis1.add(left_exhaust_pipe);
     axis2.add(right_exhaust_pipe);
-    elements[24] = left_exhaust_pipe;
-    elements[25] = right_exhaust_pipe;
+    robot_array[24] = left_exhaust_pipe;
+    robot_array[25] = right_exhaust_pipe;
 }
 
 function addForearms(axis1,axis2, x, y, z) {
@@ -644,13 +646,16 @@ function addForearms(axis1,axis2, x, y, z) {
     right_forearm.position.set(x + 40 + 7.5, y - 7.5, z + 10);
     axis1.add(left_forearm);
     axis2.add(right_forearm);
-    elements[26] = left_forearm;
-    elements[27] = right_forearm;
+    robot_array[26] = left_forearm;
+    robot_array[27] = right_forearm;
 }
 
 function color_transformation(){
-    for(var e = 0; e < elements.length; e++){
-        elements[e].material.wireframe = !elements[e].material.wireframe;
+    for(var e = 0; e < robot_elements; e++){
+        robot_array[e].material.wireframe = !robot_array[e].material.wireframe;
+        if (e < trailer_elements) {
+            trailer_array[e].material.wireframe = !trailer_array[e].material.wireframe;
+        }
     }
 }
 
@@ -673,7 +678,7 @@ function addBox(obj, x, y, z) {
     mesh = new THREE.Mesh(geometry, red);
     mesh.position.set(x, y + 25 + 50, z);
     obj.add(mesh);
-    elements[0] = mesh;
+    trailer_array[0] = mesh;
 }
 
 function addUnions(obj, x, y, z) {
@@ -683,12 +688,12 @@ function addUnions(obj, x, y, z) {
     var truck_trailer_connection = new THREE.Mesh(geometry, grey);
     truck_trailer_connection.position.set(x, y + 2.5 + 20, z - 65);
     obj.add(truck_trailer_connection);
-    elements[1] = truck_trailer_connection;
+    trailer_array[1] = truck_trailer_connection;
     geometry = new THREE.BoxGeometry(80, 5, 70);
     var wheels_box_connection = new THREE.Mesh(geometry, blue);
     wheels_box_connection.position.set(x, y + 2.5 + 20, z + 45);
     obj.add(wheels_box_connection);
-    elements[2] = wheels_box_connection;
+    trailer_array[2] = wheels_box_connection;
 }
 
 function addTrailerWheels(obj, x, y, z) {
@@ -711,8 +716,8 @@ function addTrailerWheels(obj, x, y, z) {
     obj.add(right_wheel1);
     obj.add(left_wheel2);
     obj.add(right_wheel2);
-    elements[3] = left_wheel1;
-    elements[4] = right_wheel1;
-    elements[5] = left_wheel2;
-    elements[6] = right_wheel2;
+    trailer_array[3] = left_wheel1;
+    trailer_array[4] = right_wheel1;
+    trailer_array[5] = left_wheel2;
+    trailer_array[6] = right_wheel2;
 }
