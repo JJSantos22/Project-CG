@@ -13,6 +13,7 @@ var blue = new THREE.MeshBasicMaterial({ color: 0x0000FF, wireframe: true });
 var red = new THREE.MeshBasicMaterial({ color: 0xFF0000, wireframe: true });
 var robot_array = new Array(robot_elements);
 var trailer_array = new Array(trailer_elements);
+var wire = true;
 
 
 var trailer;
@@ -74,7 +75,7 @@ function createFrontCamera(){
     height / -7.5, // Bottom
     1, 1000 // Near and far planes
     );
-    camera[0].position.set(0, 0, -100); // Adjust the position to fit your desired view
+    camera[0].position.set(0, 0, -500); // Adjust the position to fit your desired view
     camera[0].lookAt(scene.position);
 }
 
@@ -280,13 +281,6 @@ function animate() {
 ////////////////////////////
 function onResize() { 
     'use strict';
-
-    //renderer.setSize(window.innerWidth, window.innerHeight);
-
-    /* if (window.innerHeight > 0 && window.innerWidth > 0) {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-    } */
 }
 
 ///////////////////////
@@ -312,7 +306,6 @@ function onKeyDown(e) {
             break;
         case 54:  //6
             color_transformation();
-            render();
             break;
     
             // Q -Feet
@@ -451,7 +444,6 @@ function createLegs(x, y, z) {
     main_axis.add(leg_axis);
     var axis_helper = new THREE.AxisHelper(10); // Adjust the size of the AxisHelper as needed
     leg_axis.add(axis_helper);
-    material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 
     foot_axis = new THREE.Object3D();
     foot_axis.position.set(x,y - 30 - 70 - 7.5 - 2.5, z - 10);
@@ -464,8 +456,6 @@ function createLegs(x, y, z) {
     addShins(leg_axis, x, y, z);
     addLegWheels(leg_axis, x, y, z);
     addFeet(foot_axis, x, y, z);
-
-    //scene.add(legs);
 }
 
 function createHead(x, y, z) {
@@ -477,11 +467,8 @@ function createHead(x, y, z) {
     var axis_helper = new THREE.AxisHelper(10); // Adjust the size of the AxisHelper as needed
     head_axis.add(axis_helper);
 
-    material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 
     addHead(head_axis, x, y, z);
-
-    //scene.add(head);
 }
 
 function createArms(x, y, z) {
@@ -496,13 +483,10 @@ function createArms(x, y, z) {
     var axis_helper = new THREE.AxisHelper(10); // Adjust the size of the AxisHelper as needed
     arm_axis1.add(axis_helper);
     arm_axis2.add(axis_helper);
-    material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 
     addUpperArms(arm_axis1, arm_axis2, x, y, z);
     addExhaustPipe(arm_axis1 ,arm_axis2, x, y, z);
     addForearms(arm_axis1, arm_axis2, x, y, z);
-
-    //scene.add(arms);
 }
 
 function addThighs(axis, x, y, z) {
@@ -563,8 +547,8 @@ function addFeet(axis, x, y, z) {
     geometry = new THREE.BoxGeometry(20, 20, 20);
     var left_foot = new THREE.Mesh(geometry, blue);
     var right_foot = new THREE.Mesh(geometry, blue);
-    left_foot.position.set(x - 12.5 - 2.5, y + 10, z - 10);
-    right_foot.position.set(x + 12.5 + 2.5, y + 10, z - 10);
+    left_foot.position.set(x - 12.5 - 2.5, y -2.5, z - 10);
+    right_foot.position.set(x + 12.5 + 2.5, y -2.5, z - 10);
     axis.add(left_foot);
     axis.add(right_foot);
     robot_array[15] = left_foot;
@@ -590,10 +574,10 @@ function addHead(axis, x, y, z) {
     left_antena.position.set(-7.5, 20 + 5, 5); // Adjust the position relative to the head axis
     axis.add(right_antena);
     axis.add(left_antena);
-  
-    // Create the left and right eyes
     robot_array[18] = right_antena;
     robot_array[19] = left_antena;
+  
+    // Create the left and right eyes
     geometry = new THREE.PlaneGeometry(5, 5);
     var left_eye = new THREE.Mesh(geometry, grey);
     var right_eye = new THREE.Mesh(geometry, grey);
@@ -601,8 +585,6 @@ function addHead(axis, x, y, z) {
     right_eye.position.set(2.5, 10 + 2.5, -10); // Adjust the position relative to the head axis
     axis.add(left_eye);
     axis.add(right_eye);
-  
-   
     robot_array[20] = left_eye;
     robot_array[21] = right_eye;
 }
@@ -652,11 +634,12 @@ function addForearms(axis1,axis2, x, y, z) {
 
 function color_transformation(){
     for(var e = 0; e < robot_elements; e++){
-        robot_array[e].material.wireframe = !robot_array[e].material.wireframe;
+        robot_array[e].material.wireframe = !wire;
         if (e < trailer_elements) {
-            trailer_array[e].material.wireframe = !trailer_array[e].material.wireframe;
+            trailer_array[e].material.wireframe = !wire;
         }
     }
+    wire = !wire;
 }
 
 function createTrailer(x, y, z) {
