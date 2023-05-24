@@ -11,6 +11,21 @@ var blue = new THREE.MeshBasicMaterial({ color: 0x005AAB, wireframe: true });
 var red = new THREE.MeshBasicMaterial({ color: 0xB62E2E, wireframe: true });
 var wire = true;
 
+var feetUp = false;
+var feetDown = false;
+var legsUp = false;
+var legsDown = false;
+var headUp = false;
+var headDown = false;
+var armsOut = false;
+var armsIn = false
+
+var moveRight = false;
+var moveLeft = false;
+var moveUp = false;
+var moveDown = false;
+
+
 
 var trailer;
 
@@ -25,6 +40,7 @@ var arm_axis2;
 // Set the initial rotation angles
 var rotationSpeed = 0.02;
 var translationSpeed = 0.2;
+var translationTrailerSpeed = 0.6;
 var rotationAngleHead = 0;
 var rotationAngleLegs = 0;
 var rotationAngleFeet = 0;
@@ -33,6 +49,8 @@ var maxRotationAngleHead = Math.PI;
 var maxRotationAngleLegs = -Math.PI/2;
 var maxRotationAngleFeet = -Math.PI;
 var maxTranslationArms = 15;
+var positionTrailerX = 0;
+var positionTrailerZ = 0;
 
 
 
@@ -44,7 +62,7 @@ function createScene() {
 
     scene = new THREE.Scene();
 
-    scene.background = new THREE.Color(0x404040);
+    scene.background = new THREE.Color(0xf7e1aa);
 
     main_axis = (new THREE.AxisHelper(10));
     scene.add(main_axis);
@@ -212,7 +230,108 @@ function handleCollisions(){
 /* UPDATE */
 ////////////
 function update(){
-    'use strict';
+
+    if(moveUp){
+        positionTrailerZ -= translationTrailerSpeed;
+    }
+    if(moveDown){
+        positionTrailerZ += translationTrailerSpeed;
+    }
+    if(moveLeft){
+        positionTrailerX -= translationTrailerSpeed;
+    }
+    if(moveRight){
+        positionTrailerX += translationTrailerSpeed;
+    }
+    
+    if(feetUp){
+        if (rotationAngleFeet < 0 && rotationAngleFeet >= maxRotationAngleFeet){
+            rotationAngleFeet += rotationSpeed; // Increase the rotation angle
+            
+           
+            }
+            else if(rotationAngleFeet >= 0) {
+                rotationAngleFeet = 0;
+                
+                 
+            }
+        
+    }
+    if(feetDown){
+        if (rotationAngleFeet <= 0 && rotationAngleFeet > maxRotationAngleFeet){
+            rotationAngleFeet -= rotationSpeed;
+             // Decrease the rotation angle
+                
+            }
+            else if (rotationAngleFeet <= maxRotationAngleFeet){
+                rotationAngleFeet = maxRotationAngleFeet;
+                
+                
+            }
+        
+    }
+    if(legsUp){
+        if (rotationAngleLegs < 0 && rotationAngleLegs >= maxRotationAngleLegs){
+            rotationAngleLegs += rotationSpeed; // Increase the rotation angle
+            
+        }
+        else if(rotationAngleLegs >= 0){
+            rotationAngleLegs = 0;
+            
+            
+        }
+       
+    }
+    if(legsDown){
+        if (rotationAngleLegs <= 0 && rotationAngleLegs > maxRotationAngleLegs) {
+            rotationAngleLegs -= rotationSpeed;
+           
+        }
+        else if (rotationAngleLegs <= maxRotationAngleLegs){
+            rotationAngleLegs = maxRotationAngleLegs;
+            
+        }
+        
+    }
+    if(armsOut){
+        if (positionArms > 0 && positionArms <= maxTranslationArms) {
+            positionArms -= translationSpeed;
+            
+        }
+        else if (positionArms <= 0){
+            positionArms = 0;
+            
+        }
+    }
+    if(armsIn){
+        if (positionArms >= 0 && positionArms < maxTranslationArms) {
+            positionArms += translationSpeed;
+        }
+        else if (positionArms >= maxTranslationArms){
+            positionArms = maxTranslationArms;
+        }
+
+    }
+    if(headUp){
+        if( rotationAngleHead <= maxRotationAngleHead && rotationAngleHead > 0){
+            rotationAngleHead -= rotationSpeed;
+
+        }
+        else if (rotationAngleHead < 0){
+            rotationAngleHead = 0;
+        }   
+    }
+    if(headDown){
+        if( rotationAngleHead >= 0 && rotationAngleHead < maxRotationAngleHead) {
+            rotationAngleHead += rotationSpeed;
+            
+        }
+        else if(rotationAngleHead >= maxRotationAngleHead) {
+            rotationAngleHead = maxRotationAngleHead;
+        }
+
+    }
+
 
 }
 
@@ -245,6 +364,7 @@ function init() {
     render();
 
     window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
     window.addEventListener("resize", onResize);
 }
 
@@ -253,12 +373,14 @@ function init() {
 /////////////////////
 function animate() {
     'use strict';
-   
+    update();
     head_axis.rotation.x = rotationAngleHead;
     leg_axis.rotation.x = rotationAngleLegs;
     foot_axis.rotation.x = rotationAngleFeet;
     arm_axis1.position.x = positionArms;
     arm_axis2.position.x = - positionArms;
+    trailer.position.x = positionTrailerX;
+    trailer.position.z = positionTrailerZ;
 
     render();
     // Call the animate function recursively
@@ -278,6 +400,18 @@ function onResize() {
 function onKeyDown(e) {
     'use strict';
     switch (e.keyCode) {
+        case 37: // Left arrow key
+        moveLeft = true;
+        break;
+        case 38: // Up arrow key
+            moveUp = true;
+            break;
+        case 39: // Right arrow key
+            moveRight = true;
+            break;
+        case 40: // Down arrow key
+            moveDown = true;
+            break;
         case 49: //1
             switch_camera(0);
             break;
@@ -299,103 +433,37 @@ function onKeyDown(e) {
     
             // Q -Feet
         case 81:
-            if (rotationAngleFeet < 0 && rotationAngleFeet >= maxRotationAngleFeet){
-            rotationAngleFeet += rotationSpeed; // Increase the rotation angle
-            console.log(rotationAngleFeet);
-            break;  
-            }
-            else if(rotationAngleFeet >= 0) {
-                rotationAngleFeet = 0;
-                console.log(rotationAngleFeet);
-                break; 
-            }
+           feetUp = true;
+           break;
         // A - Feet
         case 65:
-            if (rotationAngleFeet <= 0 && rotationAngleFeet > maxRotationAngleFeet){
-            rotationAngleFeet -= rotationSpeed;
-            console.log(rotationAngleFeet); // Decrease the rotation angle
-            break;    
-            }
-            else if (rotationAngleFeet <= maxRotationAngleFeet){
-                rotationAngleFeet = maxRotationAngleFeet;
-                console.log(rotationAngleFeet);
-                break;
-            }
-            
+            feetDown = true;
+            break;
         // W - Legs
         case 87:
-            if (rotationAngleLegs < 0 && rotationAngleLegs >= maxRotationAngleLegs){
-                rotationAngleLegs += rotationSpeed; // Increase the rotation angle
-                console.log(rotationAngleLegs);
-                break;
-            }
-            else if(rotationAngleLegs >= 0){
-                rotationAngleLegs = 0;
-                console.log(rotationAngleLegs);
-                break;
-            }
+           legsUp = true;
+           break;
         // S - Legs
         case 83:
-            if (rotationAngleLegs <= 0 && rotationAngleLegs > maxRotationAngleLegs) {
-                rotationAngleLegs -= rotationSpeed;
-                console.log(rotationAngleLegs); // Decrease the rotation angle
-                break; 
-            }
-            else if (rotationAngleLegs <= maxRotationAngleLegs){
-                rotationAngleLegs = maxRotationAngleLegs;
-                console.log(rotationAngleLegs);
-                break;
-            }
+            legsDown = true;
             break;
         //  E - Arms
         case 69 :
-            if (positionArms > 0 && positionArms <= maxTranslationArms) {
-                positionArms -= translationSpeed;
-                console.log(positionArms); // Decrease the rotation angle
-                break;
-            }
-            else if (positionArms <= 0){
-                positionArms = 0;
-                console.log(positionArms);
-                break;
-            }
+            armsOut = true;
+            break;
         // D - Arms
         case 68:
-            if (positionArms >= 0 && positionArms < maxTranslationArms) {
-                positionArms += translationSpeed;
-                console.log(positionArms); // Increase the rotation angle
-                break;
-            }
-            else if (positionArms >= maxTranslationArms){
-                positionArms = maxTranslationArms;
-                console.log(positionArms);
-                break;
-            }
+            armsIn = true;
             break;
         // R - Head
         case 82:
-            if( rotationAngleHead >= 0 && rotationAngleHead < maxRotationAngleHead) {
-                rotationAngleHead += rotationSpeed;
-                console.log(rotationAngleHead); // Increase the rotation angle
-                break;
-            }
-            else if(rotationAngleHead >= maxRotationAngleHead) {
-                rotationAngleHead = maxRotationAngleHead;
-                console.log(rotationAngleHead);
-                break;
-            }
+            headUp = true;
+            break;
         // F - Head
         case 70:
-            if( rotationAngleHead <= maxRotationAngleHead && rotationAngleHead > 0){
-                rotationAngleHead -= rotationSpeed;
-                console.log(rotationAngleHead); // Decrease the rotation angle
-                break;
-            }
-            else if (rotationAngleHead < 0){
-                rotationAngleHead = 0;
-                console.log(rotationAngleHead);
-                break;
-            }   
+            headDown = true;
+            break
+            
     }
 
 }
@@ -404,7 +472,48 @@ function onKeyDown(e) {
 /* KEY UP CALLBACK */
 ///////////////////////
 function onKeyUp(e){
-    'use strict';
+    switch (e.keyCode) {
+        case 37: // Left arrow key
+            moveLeft = false;
+            break;
+        case 38: // Up arrow key
+            moveUp = false;
+            break;
+        case 39: // Right arrow key
+            moveRight = false;
+            break;
+        case 40: // Down arrow key
+            moveDown = false;
+            break;
+        case 81:
+           feetUp = false;
+           break;
+        // A - Feet
+        case 65:
+            feetDown = false;
+            break;
+        case 87:
+            legsUp = false;
+            break;
+            // S - Legs
+        case 83:
+            legsDown = false;
+            break;
+        case 69 :
+            armsOut = false;
+            break;
+        // D - Arms
+        case 68:
+            armsIn = false;
+            break;
+        case 82:
+            headUp = false;
+            break;
+        // F - Head
+        case 70:
+            headDown = false;
+            break
+    }
 
 }
 
