@@ -25,6 +25,9 @@ var moveLeft = false;
 var moveUp = false;
 var moveDown = false;
 
+var collisionBox1
+var collisionBox2
+
 
 
 var trailer;
@@ -208,8 +211,16 @@ function addWheels(obj, x, y, z) {
 //////////////////////
 /* CHECK COLLISIONS */
 //////////////////////
-function checkCollisions(){
+function checkCollisions(object1, object2){
     'use strict';
+
+    var box1 = new THREE.Box3().setFromObject(object1);
+    var box2 = new THREE.Box3().setFromObject(object2);
+
+    if(box1.intersectsBox(box2))
+        console.log('AHHHHHHHHHHHHHH');
+
+    return box1.intersectsBox(box2);
 
 }
 
@@ -381,7 +392,7 @@ function animate() {
     arm_axis2.position.x = - positionArms;
     trailer.position.x = positionTrailerX;
     trailer.position.z = positionTrailerZ;
-
+    checkCollisions(collisionBox1,collisionBox2);
     render();
     // Call the animate function recursively
     requestAnimationFrame(animate);
@@ -560,11 +571,11 @@ function createLegs(x, y, z) {
 function addColisionBox2(obj,x,y,z){
     'use strict';
 
-    geometry = new THREE.BoxGeometry(100, 120, 150);
-    mesh = new THREE.Mesh(geometry, red);
-    mesh.position.set(x, y + 45, z + 55);
+    geometry = new THREE.BoxGeometry(100, 120, 140);
+    collisionBox2 = new THREE.Mesh(geometry, red);
+    collisionBox2.position.set(x, y + 45, z + 50);
     //mesh.visible = false;
-    obj.add(mesh);
+    obj.add(collisionBox2);
 }
 
 function createHead(x, y, z) {
@@ -752,11 +763,11 @@ function addBox(obj, x, y, z) {
 function addCollisionBox(obj, x, y, z) {
     'use strict';
 
-    geometry = new THREE.BoxGeometry(100, 150, 200);
-    mesh = new THREE.Mesh(geometry, red);
-    mesh.position.set(x, y + 25 + 50, z);
+    geometry = new THREE.BoxGeometry(100, 150, 170);
+    collisionBox1 = new THREE.Mesh(geometry, red);
+    collisionBox1.position.set(x, y + 25 + 50, z);
     //mesh.visible = false;
-    obj.add(mesh);
+    obj.add(collisionBox1);
 }
 
 function addUnions(obj, x, y, z) {
