@@ -25,12 +25,13 @@ var moveLeft = false;
 var moveUp = false;
 var moveDown = false;
 
-var collisionBox1
-var collisionBox2
 
 
 
-var trailer;
+var truck_mode = false;
+var animation = false;
+
+var trailer_axis;
 
 var head_axis;
 var main_axis;
@@ -43,7 +44,7 @@ var arm_axis2;
 // Set the initial rotation angles
 var rotationSpeed = 0.02;
 var translationSpeed = 0.2;
-var translationTrailerSpeed = 0.6;
+var translationTrailerSpeed = 0.4;
 var rotationAngleHead = 0;
 var rotationAngleLegs = 0;
 var rotationAngleFeet = 0;
@@ -53,7 +54,25 @@ var maxRotationAngleLegs = -Math.PI/2;
 var maxRotationAngleFeet = -Math.PI;
 var maxTranslationArms = 15;
 var positionTrailerX = 0;
-var positionTrailerZ = 0;
+var positionTrailerZ = 350;
+
+
+
+const truckBoxMin = new THREE.Vector3(-50, 0, -20);
+
+const truckBoxMax = new THREE.Vector3(50, 0, 120);
+
+
+
+
+var trailerBoxMin = new THREE.Vector3(-45, 0, 265);
+var trailerBoxMax = new THREE.Vector3(45, 0, 435);
+
+var immovableWireframe = new THREE.Box3Helper(new THREE.Box3(truckBoxMin, truckBoxMax), 0x00ff00);
+
+
+var movableWireframe = new THREE.Box3Helper(new THREE.Box3(trailerBoxMin, trailerBoxMax), 0xff0000);
+
 
 
 
@@ -70,7 +89,8 @@ function createScene() {
     main_axis = (new THREE.AxisHelper(10));
     scene.add(main_axis);
 
-    
+    scene.add(immovableWireframe);
+    scene.add(movableWireframe);
     createTorso(0, 12.5, 0);
     createLegs(0, 12.5, 0);
     createHead(0, 12.5, 0);
@@ -211,137 +231,190 @@ function addWheels(obj, x, y, z) {
 //////////////////////
 /* CHECK COLLISIONS */
 //////////////////////
-function checkCollisions(object1, object2){
+function checkCollisions(){
     'use strict';
+    if (truckBoxMax.x > trailerBoxMin.x && truckBoxMin.x < trailerBoxMax.x && truckBoxMax.z > trailerBoxMin.z && truckBoxMin.z < trailerBoxMax.z) {
 
-    var box1 = new THREE.Box3().setFromObject(object1);
-    var box2 = new THREE.Box3().setFromObject(object2);
+        //console.log('Collision detected!');
+        if(truck_mode){
+            animation = true;
+            if(positionTrailerX == 0 && positionTrailerZ == 134 ){
+                animation = false;
+            }
+            
 
-    if(box1.intersectsBox(box2))
-        console.log('AHHHHHHHHHHHHHH');
-
-    return box1.intersectsBox(box2);
+        }
+        
+    }
 
 }
 
-///////////////////////
-/* HANDLE COLLISIONS */
-///////////////////////
-function handleCollisions(){
-    'use strict';
-    for(var i = 0; i < objectsgroup.children.length-1; i++){
-		//j = i + 1 -> important to avoid unecessary checks
-		for(var j = i+1; j < objectsgroup.children.length; j++){
-			objectsgroup.children[i].checkCollisions(objectsgroup.children[j]);
-		}
-	}
-}
 
 ////////////
 /* UPDATE */
 ////////////
 function update(){
+    if(!animation){
+        if(rotationAngleFeet == maxRotationAngleFeet && rotationAngleLegs == maxRotationAngleLegs && rotationAngleHead == maxRotationAngleHead && positionArms == maxTranslationArms){
+            truck_mode = true;
+            //console.log("Truck Mode ON");
+        }
+        else{
+            truck_mode = false;
+        }
 
-    if(moveUp){
-        positionTrailerZ -= translationTrailerSpeed;
-    }
-    if(moveDown){
-        positionTrailerZ += translationTrailerSpeed;
-    }
-    if(moveLeft){
-        positionTrailerX -= translationTrailerSpeed;
-    }
-    if(moveRight){
-        positionTrailerX += translationTrailerSpeed;
-    }
-    
-    if(feetUp){
-        if (rotationAngleFeet < 0 && rotationAngleFeet >= maxRotationAngleFeet){
-            rotationAngleFeet += rotationSpeed; // Increase the rotation angle
+        if(moveUp){
+            positionTrailerZ -= translationTrailerSpeed;
+            trailerBoxMin.z -= translationTrailerSpeed;
+            trailerBoxMax.z -= translationTrailerSpeed;
             
+        }
+        if(moveDown){
+            positionTrailerZ += translationTrailerSpeed;
+            trailerBoxMin.z += translationTrailerSpeed;
+            trailerBoxMax.z += translationTrailerSpeed;
+        }
+        if(moveLeft){
+            positionTrailerX -= translationTrailerSpeed;
+            trailerBoxMin.x -= translationTrailerSpeed;
+            trailerBoxMax.x -= translationTrailerSpeed;
+        }
+        if(moveRight){
+            positionTrailerX += translationTrailerSpeed;
+            trailerBoxMin.x += translationTrailerSpeed;
+            trailerBoxMax.x += translationTrailerSpeed;
+        }
+        
+        if(feetUp){
+            if (rotationAngleFeet < 0 && rotationAngleFeet >= maxRotationAngleFeet){
+                rotationAngleFeet += rotationSpeed; // Increase the rotation angle
+                
+            
+                }
+                else if(rotationAngleFeet >= 0) {
+                    rotationAngleFeet = 0;
+                    
+                    
+                }
+            
+        }
+        if(feetDown){
+            if (rotationAngleFeet <= 0 && rotationAngleFeet > maxRotationAngleFeet){
+                rotationAngleFeet -= rotationSpeed;
+                // Decrease the rotation angle
+                    
+                }
+                else if (rotationAngleFeet <= maxRotationAngleFeet){
+                    rotationAngleFeet = maxRotationAngleFeet;
+                    
+                    
+                }
+            
+        }
+        if(legsUp){
+            if (rotationAngleLegs < 0 && rotationAngleLegs >= maxRotationAngleLegs){
+                rotationAngleLegs += rotationSpeed; // Increase the rotation angle
+                
+            }
+            else if(rotationAngleLegs >= 0){
+                rotationAngleLegs = 0;
+                
+                
+            }
+        
+        }
+        if(legsDown){
+            if (rotationAngleLegs <= 0 && rotationAngleLegs > maxRotationAngleLegs) {
+                rotationAngleLegs -= rotationSpeed;
+            
+            }
+            else if (rotationAngleLegs <= maxRotationAngleLegs){
+                rotationAngleLegs = maxRotationAngleLegs;
+                
+            }
+            
+        }
+        if(armsOut){
+            if (positionArms > 0 && positionArms <= maxTranslationArms) {
+                positionArms -= translationSpeed;
+                
+            }
+            else if (positionArms <= 0){
+                positionArms = 0;
+                
+            }
+        }
+        if(armsIn){
+            if (positionArms >= 0 && positionArms < maxTranslationArms) {
+                positionArms += translationSpeed;
+            }
+            else if (positionArms >= maxTranslationArms){
+                positionArms = maxTranslationArms;
+            }
+
+        }
+        if(headUp){
+            if( rotationAngleHead <= maxRotationAngleHead && rotationAngleHead > 0){
+                rotationAngleHead -= rotationSpeed;
+
+            }
+            else if (rotationAngleHead < 0){
+                rotationAngleHead = 0;
+            }   
+        }
+        if(headDown){
+            if( rotationAngleHead >= 0 && rotationAngleHead < maxRotationAngleHead) {
+                rotationAngleHead += rotationSpeed;
+                
+            }
+            else if(rotationAngleHead >= maxRotationAngleHead) {
+                rotationAngleHead = maxRotationAngleHead;
+            }
+
+        }
+    }
+    else{
+        
+        if(positionTrailerX > -1 && positionTrailerX < 1 && positionTrailerZ >= 133 && positionTrailerZ <= 135 ){
+            positionTrailerX = 0;
+            positionTrailerZ = 134;
+            trailerBoxMin.x = -45;
+            trailerBoxMin.z = 49;
+            trailerBoxMax.x = 45;
+            trailerBoxMax.z = 220;
+            console.log("trailerBoxMinx: " + trailerBoxMin.x);
+            console.log("trailerBoxMinz: " + trailerBoxMin.z);
+            console.log("trailerBoxMaxx: " + trailerBoxMax.x);
+            console.log("trailerBoxMaxz: " + trailerBoxMax.z);
            
-            }
-            else if(rotationAngleFeet >= 0) {
-                rotationAngleFeet = 0;
-                
-                 
-            }
-        
-    }
-    if(feetDown){
-        if (rotationAngleFeet <= 0 && rotationAngleFeet > maxRotationAngleFeet){
-            rotationAngleFeet -= rotationSpeed;
-             // Decrease the rotation angle
-                
-            }
-            else if (rotationAngleFeet <= maxRotationAngleFeet){
-                rotationAngleFeet = maxRotationAngleFeet;
-                
-                
-            }
-        
-    }
-    if(legsUp){
-        if (rotationAngleLegs < 0 && rotationAngleLegs >= maxRotationAngleLegs){
-            rotationAngleLegs += rotationSpeed; // Increase the rotation angle
-            
         }
-        else if(rotationAngleLegs >= 0){
-            rotationAngleLegs = 0;
-            
-            
+        if(positionTrailerX < -1 ){
+            positionTrailerX += translationTrailerSpeed;
+            trailerBoxMin.x += translationTrailerSpeed;
+            trailerBoxMax.x += translationTrailerSpeed;
+     
         }
-       
-    }
-    if(legsDown){
-        if (rotationAngleLegs <= 0 && rotationAngleLegs > maxRotationAngleLegs) {
-            rotationAngleLegs -= rotationSpeed;
-           
-        }
-        else if (rotationAngleLegs <= maxRotationAngleLegs){
-            rotationAngleLegs = maxRotationAngleLegs;
-            
+        if(positionTrailerX > 1 ){
+            positionTrailerX -= translationTrailerSpeed;
+            trailerBoxMin.x -= translationTrailerSpeed;
+            trailerBoxMax.x -= translationTrailerSpeed;
         }
         
-    }
-    if(armsOut){
-        if (positionArms > 0 && positionArms <= maxTranslationArms) {
-            positionArms -= translationSpeed;
-            
+        if(positionTrailerZ < 135 ){
+            positionTrailerZ += translationTrailerSpeed;
+            trailerBoxMin.z += translationTrailerSpeed;
+            trailerBoxMax.z += translationTrailerSpeed;
         }
-        else if (positionArms <= 0){
-            positionArms = 0;
-            
+        if(positionTrailerZ > 133 ){
+            positionTrailerZ -= translationTrailerSpeed;
+            trailerBoxMin.z -= translationTrailerSpeed;
+            trailerBoxMax.z -= translationTrailerSpeed;
         }
-    }
-    if(armsIn){
-        if (positionArms >= 0 && positionArms < maxTranslationArms) {
-            positionArms += translationSpeed;
-        }
-        else if (positionArms >= maxTranslationArms){
-            positionArms = maxTranslationArms;
-        }
+          
 
+        
     }
-    if(headUp){
-        if( rotationAngleHead <= maxRotationAngleHead && rotationAngleHead > 0){
-            rotationAngleHead -= rotationSpeed;
-
-        }
-        else if (rotationAngleHead < 0){
-            rotationAngleHead = 0;
-        }   
-    }
-    if(headDown){
-        if( rotationAngleHead >= 0 && rotationAngleHead < maxRotationAngleHead) {
-            rotationAngleHead += rotationSpeed;
-            
-        }
-        else if(rotationAngleHead >= maxRotationAngleHead) {
-            rotationAngleHead = maxRotationAngleHead;
-        }
-
-    }
+    console.log(animation);
 
 
 }
@@ -385,14 +458,21 @@ function init() {
 function animate() {
     'use strict';
     update();
+    checkCollisions()
     head_axis.rotation.x = rotationAngleHead;
     leg_axis.rotation.x = rotationAngleLegs;
     foot_axis.rotation.x = rotationAngleFeet;
     arm_axis1.position.x = positionArms;
     arm_axis2.position.x = - positionArms;
-    trailer.position.x = positionTrailerX;
-    trailer.position.z = positionTrailerZ;
-    checkCollisions(collisionBox1,collisionBox2);
+    
+    trailer_axis.position.x = positionTrailerX;
+    trailer_axis.position.z = positionTrailerZ;
+    //checkCollisions(collisionBox1,collisionBox2);
+    immovableWireframe.box.set(truckBoxMin, truckBoxMax);
+    //immovableWireframe.update();
+
+    movableWireframe.box.set(trailerBoxMin, trailerBoxMax);
+    //movableWireframe.update();
     render();
     // Call the animate function recursively
     requestAnimationFrame(animate);
@@ -541,7 +621,7 @@ function createTorso(x, y, z) {
     addAbdomen(torso, x, y, z);
     addPectorals(torso, x, y, z);
     addWheels(torso, x, y, z);
-    addColisionBox2(torso, x,y,z);
+    
 
     scene.add(torso);
 }
@@ -568,15 +648,6 @@ function createLegs(x, y, z) {
     addFeet(foot_axis, x, y, z);
 }
 
-function addColisionBox2(obj,x,y,z){
-    'use strict';
-
-    geometry = new THREE.BoxGeometry(100, 120, 140);
-    collisionBox2 = new THREE.Mesh(geometry, red);
-    collisionBox2.position.set(x, y + 45, z + 50);
-    //mesh.visible = false;
-    obj.add(collisionBox2);
-}
 
 function createHead(x, y, z) {
     'use strict';
@@ -742,48 +813,44 @@ function color_transformation(){
 function createTrailer(x, y, z) {
     'use strict';
 
-    trailer = new THREE.Object3D();
+    trailer_axis = new THREE.Object3D();
+    trailer_axis.position.set(x,y,z);
+    main_axis.add(trailer_axis);
+    var axis_helper = new THREE.AxisHelper(20); // Adjust the size of the AxisHelper as needed
+    trailer_axis.add(axis_helper);
 
-    addBox(trailer, x, y, z);
-    addUnions(trailer, x, y, z);
-    addTrailerWheels(trailer, x, y, z);
-    addCollisionBox(trailer, x, y, z);
-    scene.add(trailer);
+    addBox(trailer_axis, x, y, z);
+    addUnions(trailer_axis, x, y, z);
+    addTrailerWheels(trailer_axis, x, y, z);
+    //addCollisionBox(trailer_axis, x, y, z);
+    //scene.add(trailer_axis);
 }
 
-function addBox(obj, x, y, z) {
+function addBox(axis, x, y, z) {
     'use strict';
 
     geometry = new THREE.BoxGeometry(80, 100, 160);
     mesh = new THREE.Mesh(geometry, red);
-    mesh.position.set(x, y + 25 + 50, z);
-    obj.add(mesh);
+    mesh.position.set(0, 25 + 50, 0);
+    axis.add(mesh);
 }
 
-function addCollisionBox(obj, x, y, z) {
-    'use strict';
 
-    geometry = new THREE.BoxGeometry(100, 150, 170);
-    collisionBox1 = new THREE.Mesh(geometry, red);
-    collisionBox1.position.set(x, y + 25 + 50, z);
-    //mesh.visible = false;
-    obj.add(collisionBox1);
-}
 
-function addUnions(obj, x, y, z) {
+function addUnions(axis, x, y, z) {
     'use strict';
 
     geometry = new THREE.CylinderGeometry(5, 5, 5, 32);
     var truck_trailer_connection = new THREE.Mesh(geometry, grey);
-    truck_trailer_connection.position.set(x, y + 2.5 + 20, z - 65);
-    obj.add(truck_trailer_connection);
+    truck_trailer_connection.position.set(0, 2.5 + 20, - 65);
+    axis.add(truck_trailer_connection);
     geometry = new THREE.BoxGeometry(80, 5, 70);
     var wheels_box_connection = new THREE.Mesh(geometry, blue);
-    wheels_box_connection.position.set(x, y + 2.5 + 20, z + 45);
-    obj.add(wheels_box_connection);
+    wheels_box_connection.position.set(0, 2.5 + 20, 45);
+    axis.add(wheels_box_connection);
 }
 
-function addTrailerWheels(obj, x, y, z) {
+function addTrailerWheels(axis, x, y, z) {
     'use strict';
 
     geometry = new THREE.CylinderGeometry(10, 10, 15, 32);
@@ -795,12 +862,12 @@ function addTrailerWheels(obj, x, y, z) {
     right_wheel1.rotation.z=Math.PI/2;
     left_wheel2.rotation.z=Math.PI/2;
     right_wheel2.rotation.z=Math.PI/2;
-    left_wheel1.position.set(x - 30 - 2.5, y + 10, z + 30);
-    right_wheel1.position.set(x + 30 + 2.5, y + 10, z + 30);
-    left_wheel2.position.set(x - 30 - 2.5, y + 10, z + 60);
-    right_wheel2.position.set(x + 30 + 2.5, y + 10, z + 60);
-    obj.add(left_wheel1);
-    obj.add(right_wheel1);
-    obj.add(left_wheel2);
-    obj.add(right_wheel2);
+    left_wheel1.position.set(- 30 - 2.5,  10, 30);
+    right_wheel1.position.set( 30 + 2.5,  10, 30);
+    left_wheel2.position.set(- 30 - 2.5, 10, 60);
+    right_wheel2.position.set( 30 + 2.5,  10, 60);
+    axis.add(left_wheel1);
+    axis.add(right_wheel1);
+    axis.add(left_wheel2);
+    axis.add(right_wheel2);
 }
