@@ -5,14 +5,10 @@ var scene, renderer;
 var camera = new Array(5);
 var active_camera = 3;
 var geometry, material, mesh;
-const robot_elements = 28;
-const trailer_elements = 7;
 var grey = new THREE.MeshBasicMaterial({ color: 0x6C6C6C, wireframe: true });
 var black = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true });
-var blue = new THREE.MeshBasicMaterial({ color: 0x0000FF, wireframe: true });
-var red = new THREE.MeshBasicMaterial({ color: 0xFF0000, wireframe: true });
-var robot_array = new Array(robot_elements);
-var trailer_array = new Array(trailer_elements);
+var blue = new THREE.MeshBasicMaterial({ color: 0x005AAB, wireframe: true });
+var red = new THREE.MeshBasicMaterial({ color: 0xB62E2E, wireframe: true });
 var wire = true;
 
 
@@ -69,13 +65,13 @@ function createFrontCamera(){
     const width = window.innerWidth;
     const height = window.innerHeight;
     camera[0] = new THREE.OrthographicCamera(
-    width / -7.5, // Left
-    width / 7.5,  // Right
-    height / 7.5, // Top
-    height / -7.5, // Bottom
+    width / -4, // Left
+    width / 4,  // Right
+    height / 4, // Top
+    height / -4, // Bottom
     1, 1000 // Near and far planes
     );
-    camera[0].position.set(0, 0, -500); // Adjust the position to fit your desired view
+    camera[0].position.set(0, 0, -200); // Adjust the position to fit your desired view
     camera[0].lookAt(scene.position);
 }
 
@@ -83,13 +79,13 @@ function createLateralCamera(){
     const width = window.innerWidth;
     const height = window.innerHeight;
     camera[1] = new THREE.OrthographicCamera(
-    width / -7.5, // Left
-    width / 7.5,  // Right
-    height / 7.5, // Top
-    height / -7.5, // Bottom
+    width / -4, // Left
+    width / 4,  // Right
+    height / 4, // Top
+    height / -4, // Bottom
     1, 1000 // Near and far planes
     );
-    camera[1].position.set(-100, 0, 0); // Adjust the position to fit your desired view
+    camera[1].position.set(-200, 0, 0); // Adjust the position to fit your desired view
     camera[1].lookAt(scene.position);
 }
 
@@ -97,25 +93,25 @@ function createTopCamera(){
     const width = window.innerWidth;
     const height = window.innerHeight;
     camera[2] = new THREE.OrthographicCamera(
-    width / -7.5, // Left
-    width / 7.5,  // Right
-    height / 7.5, // Top
-    height / -7.5, // Bottom
+    width / -4, // Left
+    width / 4,  // Right
+    height / 4, // Top
+    height / -4, // Bottom
     1, 1000 // Near and far planes
     );
-    camera[2].position.set(0, 100, 0); // Adjust the position to fit your desired view
-    camera[2].lookAt(scene.position);
+    camera[2].position.set(0, 200, 90); // Adjust the position to fit your desired view
+    camera[2].lookAt(scene.position.x, scene.position.y, scene.position.z + 90);
 }
 
 function createPerspectiveCamera() {
     'use strict';
-    camera[3] = new THREE.PerspectiveCamera(70,
+    camera[3] = new THREE.PerspectiveCamera(100,
                                          window.innerWidth / window.innerHeight,
                                          1,
                                          1000);
-    camera[3].position.x = -100;
-    camera[3].position.y = 100;
-    camera[3].position.z = -100;
+    camera[3].position.x = -150;
+    camera[3].position.y = 150;
+    camera[3].position.z = -150;
     camera[3].lookAt(scene.position);
 }
 
@@ -123,10 +119,10 @@ function createOrtographicCamera(){
     const width = window.innerWidth;
     const height = window.innerHeight;
     camera[4] = new THREE.OrthographicCamera(
-    width / -7.5, // Left
-    width / 7.5,  // Right
-    height / 7.5, // Top
-    height / -7.5, // Bottom
+    width / -3, // Left
+    width / 3,  // Right
+    height / 3, // Top
+    height / -3, // Bottom
     1, 1000 // Near and far planes
     );
     camera[4].position.set(-100, 150, -100); // Adjust the position to fit your desired view
@@ -150,7 +146,6 @@ function addWaist(obj, x, y, z) {
     mesh = new THREE.Mesh(geometry, red);
     mesh.position.set(x, y, z);
     obj.add(mesh);
-    robot_array[0] = mesh;
 }
 
 function addAbdomen(obj, x, y, z) {
@@ -160,7 +155,6 @@ function addAbdomen(obj, x, y, z) {
     mesh = new THREE.Mesh(geometry, red);
     mesh.position.set(x, y + 7.5 + 12.5, z);
     obj.add(mesh);
-    robot_array[1] = mesh;
 }
 
 function addPectorals(obj, x, y, z) {
@@ -170,16 +164,13 @@ function addPectorals(obj, x, y, z) {
     mesh = new THREE.Mesh(geometry, red);
     mesh.position.set(x, y + 7.5 + 25 + 20, z);
     obj.add(mesh);
-    robot_array[2] = mesh;
-    geometry = new THREE.PlaneGeometry(30, 15);
+    geometry = new THREE.BoxGeometry(30, 15, 0.1);
     var left_pectoral = new THREE.Mesh(geometry, grey);
     var right_pectoral = new THREE.Mesh(geometry, grey);
     left_pectoral.position.set(x - 20, y + 7.5 + 25 + 20 + 7.5, z - 15);
     right_pectoral.position.set(x + 20, y + 7.5 + 25 + 20 + 7.5, z - 15);
     obj.add(left_pectoral);
     obj.add(right_pectoral);
-    robot_array[3] = left_pectoral;
-    robot_array[4] = right_pectoral;
 }
 
 function addWheels(obj, x, y, z) {
@@ -194,8 +185,6 @@ function addWheels(obj, x, y, z) {
     right_wheel.position.set(x + 25 + 7.5, y - 2.5, z);
     obj.add(left_wheel);
     obj.add(right_wheel);
-    robot_array[5] = left_wheel;
-    robot_array[6] = right_wheel;
 }
 
 //////////////////////
@@ -499,8 +488,6 @@ function addThighs(axis, x, y, z) {
     right_thigh.position.set(x + 12.5 + 2.5, y - 15-7.5-2.5, z);
     axis.add(left_thigh);
     axis.add(right_thigh);
-    robot_array[7] = left_thigh;
-    robot_array[8] = right_thigh;
 }
 
 function addShins(axis, x, y, z) {
@@ -513,8 +500,6 @@ function addShins(axis, x, y, z) {
     right_shin.position.set(x + 12.5 + 2.5, y - 30 - 35-7.5-2.5, z);
     axis.add(left_shin);
     axis.add(right_shin);
-    robot_array[9] = left_shin;
-    robot_array[10] = right_shin;
 }
 
 function addLegWheels(axis, x, y, z) {
@@ -535,10 +520,6 @@ function addLegWheels(axis, x, y, z) {
     axis.add(right_wheel1);
     axis.add(left_wheel2);
     axis.add(right_wheel2);
-    robot_array[11] = left_wheel1;
-    robot_array[12] = right_wheel1;
-    robot_array[13] = left_wheel2;
-    robot_array[14] = right_wheel2;
 }
 
 function addFeet(axis, x, y, z) {
@@ -551,8 +532,6 @@ function addFeet(axis, x, y, z) {
     right_foot.position.set(x + 12.5 + 2.5, y -2.5, z - 10);
     axis.add(left_foot);
     axis.add(right_foot);
-    robot_array[15] = left_foot;
-    robot_array[16] = right_foot;
 }
 
 function addHead(axis, x, y, z) {
@@ -564,7 +543,6 @@ function addHead(axis, x, y, z) {
     var head_mesh = new THREE.Mesh(geometry, blue);
     head_mesh.position.set(0, 10, 0); // Adjust the position relative to the head axis
     axis.add(head_mesh);
-    robot_array[17] = head_mesh;
   
     // Create the right and left antennas
     geometry = new THREE.BoxGeometry(5, 10, 10);
@@ -574,19 +552,15 @@ function addHead(axis, x, y, z) {
     left_antena.position.set(-7.5, 20 + 5, 5); // Adjust the position relative to the head axis
     axis.add(right_antena);
     axis.add(left_antena);
-    robot_array[18] = right_antena;
-    robot_array[19] = left_antena;
   
     // Create the left and right eyes
-    geometry = new THREE.PlaneGeometry(5, 5);
+    geometry = new THREE.BoxGeometry(5, 5, 0.1);
     var left_eye = new THREE.Mesh(geometry, grey);
     var right_eye = new THREE.Mesh(geometry, grey);
     left_eye.position.set(-2.5, 10 + 2.5, -10); // Adjust the position relative to the head axis
     right_eye.position.set(2.5, 10 + 2.5, -10); // Adjust the position relative to the head axis
     axis.add(left_eye);
     axis.add(right_eye);
-    robot_array[20] = left_eye;
-    robot_array[21] = right_eye;
 }
 
 function addUpperArms(axis1,axis2, x, y, z) {
@@ -599,8 +573,6 @@ function addUpperArms(axis1,axis2, x, y, z) {
     right_upper_arm.position.set(x + 15 + 20, y + 20, z + 15 + 10);
     axis1.add(left_upper_arm);
     axis2.add(right_upper_arm);
-    robot_array[22] = left_upper_arm;
-    robot_array[23] = right_upper_arm;
     
 }
 
@@ -614,8 +586,6 @@ function addExhaustPipe(axis1,axis2, x, y, z){
     right_exhaust_pipe.position.set(x + 40 + 15 + 2.5, y + 20 + 5, z + 15 + 10 + 2.5);
     axis1.add(left_exhaust_pipe);
     axis2.add(right_exhaust_pipe);
-    robot_array[24] = left_exhaust_pipe;
-    robot_array[25] = right_exhaust_pipe;
 }
 
 function addForearms(axis1,axis2, x, y, z) {
@@ -628,17 +598,13 @@ function addForearms(axis1,axis2, x, y, z) {
     right_forearm.position.set(x + 40 + 7.5, y - 7.5, z + 10);
     axis1.add(left_forearm);
     axis2.add(right_forearm);
-    robot_array[26] = left_forearm;
-    robot_array[27] = right_forearm;
 }
 
 function color_transformation(){
-    for(var e = 0; e < robot_elements; e++){
-        robot_array[e].material.wireframe = !wire;
-        if (e < trailer_elements) {
-            trailer_array[e].material.wireframe = !wire;
-        }
-    }
+    grey.wireframe = !wire;
+    red.wireframe = !wire;
+    black.wireframe = !wire;
+    blue.wireframe = !wire;
     wire = !wire;
 }
 
@@ -661,7 +627,6 @@ function addBox(obj, x, y, z) {
     mesh = new THREE.Mesh(geometry, red);
     mesh.position.set(x, y + 25 + 50, z);
     obj.add(mesh);
-    trailer_array[0] = mesh;
 }
 
 function addUnions(obj, x, y, z) {
@@ -671,12 +636,10 @@ function addUnions(obj, x, y, z) {
     var truck_trailer_connection = new THREE.Mesh(geometry, grey);
     truck_trailer_connection.position.set(x, y + 2.5 + 20, z - 65);
     obj.add(truck_trailer_connection);
-    trailer_array[1] = truck_trailer_connection;
     geometry = new THREE.BoxGeometry(80, 5, 70);
     var wheels_box_connection = new THREE.Mesh(geometry, blue);
     wheels_box_connection.position.set(x, y + 2.5 + 20, z + 45);
     obj.add(wheels_box_connection);
-    trailer_array[2] = wheels_box_connection;
 }
 
 function addTrailerWheels(obj, x, y, z) {
@@ -699,8 +662,4 @@ function addTrailerWheels(obj, x, y, z) {
     obj.add(right_wheel1);
     obj.add(left_wheel2);
     obj.add(right_wheel2);
-    trailer_array[3] = left_wheel1;
-    trailer_array[4] = right_wheel1;
-    trailer_array[5] = left_wheel2;
-    trailer_array[6] = right_wheel2;
 }
