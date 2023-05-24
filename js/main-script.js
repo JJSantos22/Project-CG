@@ -72,7 +72,7 @@ function createScene() {
     createLegs(0, 12.5, 0);
     createHead(0, 12.5, 0);
     createArms(0, 12.5, 0);
-    createTrailer(0, 0, 150); 
+    createTrailer(0, 0, 350); 
 
 }
 
@@ -530,6 +530,7 @@ function createTorso(x, y, z) {
     addAbdomen(torso, x, y, z);
     addPectorals(torso, x, y, z);
     addWheels(torso, x, y, z);
+    addColisionBox2(torso, x,y,z);
 
     scene.add(torso);
 }
@@ -554,6 +555,16 @@ function createLegs(x, y, z) {
     addShins(leg_axis, x, y, z);
     addLegWheels(leg_axis, x, y, z);
     addFeet(foot_axis, x, y, z);
+}
+
+function addColisionBox2(obj,x,y,z){
+    'use strict';
+
+    geometry = new THREE.BoxGeometry(100, 120, 150);
+    mesh = new THREE.Mesh(geometry, red);
+    mesh.position.set(x, y + 45, z + 55);
+    //mesh.visible = false;
+    obj.add(mesh);
 }
 
 function createHead(x, y, z) {
@@ -725,7 +736,7 @@ function createTrailer(x, y, z) {
     addBox(trailer, x, y, z);
     addUnions(trailer, x, y, z);
     addTrailerWheels(trailer, x, y, z);
-
+    addCollisionBox(trailer, x, y, z);
     scene.add(trailer);
 }
 
@@ -735,6 +746,16 @@ function addBox(obj, x, y, z) {
     geometry = new THREE.BoxGeometry(80, 100, 160);
     mesh = new THREE.Mesh(geometry, red);
     mesh.position.set(x, y + 25 + 50, z);
+    obj.add(mesh);
+}
+
+function addCollisionBox(obj, x, y, z) {
+    'use strict';
+
+    geometry = new THREE.BoxGeometry(100, 150, 200);
+    mesh = new THREE.Mesh(geometry, red);
+    mesh.position.set(x, y + 25 + 50, z);
+    //mesh.visible = false;
     obj.add(mesh);
 }
 
