@@ -9,6 +9,8 @@ var grey = new THREE.MeshBasicMaterial({ color: 0x6C6C6C, wireframe: true });
 var black = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true });
 var blue = new THREE.MeshBasicMaterial({ color: 0x005AAB, wireframe: true });
 var red = new THREE.MeshBasicMaterial({ color: 0xB62E2E, wireframe: true });
+var colorr = new THREE.MeshBasicMaterial({ color:  0x808b96 , wireframe: true });
+var colorrr = new THREE.MeshBasicMaterial({color: 0xb3b6b7 , wireframe: true});
 var wire = true;
 
 var feetUp = false;
@@ -807,6 +809,8 @@ function color_transformation(){
     red.wireframe = !wire;
     black.wireframe = !wire;
     blue.wireframe = !wire;
+    colorr.wireframe = !wire;
+    colorrr.wireframe = !wire;
     wire = !wire;
 }
 
@@ -830,7 +834,7 @@ function addBox(axis, x, y, z) {
     'use strict';
 
     geometry = new THREE.BoxGeometry(80, 100, 160);
-    mesh = new THREE.Mesh(geometry, red);
+    mesh = new THREE.Mesh(geometry, colorr);
     mesh.position.set(0, 25 + 50, 0);
     axis.add(mesh);
 }
@@ -845,7 +849,7 @@ function addUnions(axis, x, y, z) {
     truck_trailer_connection.position.set(0, 2.5 + 20, - 65);
     axis.add(truck_trailer_connection);
     geometry = new THREE.BoxGeometry(80, 5, 70);
-    var wheels_box_connection = new THREE.Mesh(geometry, blue);
+    var wheels_box_connection = new THREE.Mesh(geometry, colorrr);
     wheels_box_connection.position.set(0, 2.5 + 20, 45);
     axis.add(wheels_box_connection);
 }
