@@ -29,7 +29,7 @@ var moveDown = false;
 
 
 
-
+var change_color_state = false;
 var truck_mode = false;
 var animation = false;
 
@@ -257,6 +257,17 @@ function checkCollisions(){
 ////////////
 function update(){
     if(!animation){
+        if (change_color_state){
+            grey.wireframe = !wire;
+            red.wireframe = !wire;
+            black.wireframe = !wire;
+            blue.wireframe = !wire;
+            colorr.wireframe = !wire;
+            colorrr.wireframe = !wire;
+            wire = !wire;
+            change_color_state = false;
+        }
+        
         if(rotationAngleFeet == maxRotationAngleFeet && rotationAngleLegs == maxRotationAngleLegs && rotationAngleHead == maxRotationAngleHead && positionArms == maxTranslationArms){
             truck_mode = true;
             //console.log("Truck Mode ON");
@@ -521,7 +532,7 @@ function onKeyDown(e) {
             switch_camera(4);
             break;
         case 54:  //6
-            color_transformation();
+            change_color_state = true;
             break;
     
             // Q -Feet
@@ -655,7 +666,7 @@ function createHead(x, y, z) {
     'use strict';
 
     head_axis = new THREE.Object3D();
-    head_axis.position.set(x, y + 7.5 + 25 + 40, z + 5); 
+    head_axis.position.set(x, y + 7.5 + 25 + 40 - 0.1, z + 5); 
     main_axis.add(head_axis);
     var axis_helper = new THREE.AxisHelper(10); // Adjust the size of the AxisHelper as needed
     head_axis.add(axis_helper);
@@ -802,16 +813,6 @@ function addForearms(axis1,axis2, x, y, z) {
     right_forearm.position.set(x + 40 + 7.5, y - 7.5, z + 10);
     axis1.add(left_forearm);
     axis2.add(right_forearm);
-}
-
-function color_transformation(){
-    grey.wireframe = !wire;
-    red.wireframe = !wire;
-    black.wireframe = !wire;
-    blue.wireframe = !wire;
-    colorr.wireframe = !wire;
-    colorrr.wireframe = !wire;
-    wire = !wire;
 }
 
 function createTrailer(x, y, z) {
