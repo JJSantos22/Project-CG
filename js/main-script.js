@@ -44,9 +44,11 @@ var arm_axis2;
 
 
 // Set the initial rotation angles
-var rotationSpeed = 0.02;
-var translationSpeed = 0.2;
-var translationTrailerSpeed = 0.4;
+var clock = new THREE.Clock();
+var delta;
+var rotationSpeed = 5;
+var translationSpeed = 20;
+var translationTrailerSpeed = 45;
 var rotationAngleHead = 0;
 var rotationAngleLegs = 0;
 var rotationAngleFeet = 0;
@@ -277,30 +279,30 @@ function update(){
         }
 
         if(moveUp){
-            positionTrailerZ -= translationTrailerSpeed;
-            trailerBoxMin.z -= translationTrailerSpeed;
-            trailerBoxMax.z -= translationTrailerSpeed;
+            positionTrailerZ -= translationTrailerSpeed * delta;
+            trailerBoxMin.z -= translationTrailerSpeed * delta;
+            trailerBoxMax.z -= translationTrailerSpeed * delta;
             
         }
         if(moveDown){
-            positionTrailerZ += translationTrailerSpeed;
-            trailerBoxMin.z += translationTrailerSpeed;
-            trailerBoxMax.z += translationTrailerSpeed;
+            positionTrailerZ += translationTrailerSpeed * delta;
+            trailerBoxMin.z += translationTrailerSpeed * delta;
+            trailerBoxMax.z += translationTrailerSpeed * delta;
         }
         if(moveLeft){
-            positionTrailerX -= translationTrailerSpeed;
-            trailerBoxMin.x -= translationTrailerSpeed;
-            trailerBoxMax.x -= translationTrailerSpeed;
+            positionTrailerX -= translationTrailerSpeed * delta;
+            trailerBoxMin.x -= translationTrailerSpeed * delta;
+            trailerBoxMax.x -= translationTrailerSpeed * delta;
         }
         if(moveRight){
-            positionTrailerX += translationTrailerSpeed;
-            trailerBoxMin.x += translationTrailerSpeed;
-            trailerBoxMax.x += translationTrailerSpeed;
+            positionTrailerX += translationTrailerSpeed * delta;
+            trailerBoxMin.x += translationTrailerSpeed * delta;
+            trailerBoxMax.x += translationTrailerSpeed * delta;
         }
         
         if(feetUp){
             if (rotationAngleFeet < 0 && rotationAngleFeet >= maxRotationAngleFeet){
-                rotationAngleFeet += rotationSpeed; // Increase the rotation angle
+                rotationAngleFeet += rotationSpeed * delta; // Increase the rotation angle
                 
             
                 }
@@ -313,7 +315,7 @@ function update(){
         }
         if(feetDown){
             if (rotationAngleFeet <= 0 && rotationAngleFeet > maxRotationAngleFeet){
-                rotationAngleFeet -= rotationSpeed;
+                rotationAngleFeet -= rotationSpeed * delta;
                 // Decrease the rotation angle
                     
                 }
@@ -326,7 +328,7 @@ function update(){
         }
         if(legsUp){
             if (rotationAngleLegs < 0 && rotationAngleLegs >= maxRotationAngleLegs){
-                rotationAngleLegs += rotationSpeed; // Increase the rotation angle
+                rotationAngleLegs += rotationSpeed  * delta; // Increase the rotation angle
                 
             }
             else if(rotationAngleLegs >= 0){
@@ -338,7 +340,7 @@ function update(){
         }
         if(legsDown){
             if (rotationAngleLegs <= 0 && rotationAngleLegs > maxRotationAngleLegs) {
-                rotationAngleLegs -= rotationSpeed;
+                rotationAngleLegs -= rotationSpeed * delta;
             
             }
             else if (rotationAngleLegs <= maxRotationAngleLegs){
@@ -349,7 +351,7 @@ function update(){
         }
         if(armsOut){
             if (positionArms > 0 && positionArms <= maxTranslationArms) {
-                positionArms -= translationSpeed;
+                positionArms -= translationSpeed * delta;
                 
             }
             else if (positionArms <= 0){
@@ -359,7 +361,7 @@ function update(){
         }
         if(armsIn){
             if (positionArms >= 0 && positionArms < maxTranslationArms) {
-                positionArms += translationSpeed;
+                positionArms += translationSpeed * delta;
             }
             else if (positionArms >= maxTranslationArms){
                 positionArms = maxTranslationArms;
@@ -368,7 +370,7 @@ function update(){
         }
         if(headUp){
             if( rotationAngleHead <= maxRotationAngleHead && rotationAngleHead > 0){
-                rotationAngleHead -= rotationSpeed;
+                rotationAngleHead -= rotationSpeed * delta;
 
             }
             else if (rotationAngleHead < 0){
@@ -377,7 +379,7 @@ function update(){
         }
         if(headDown){
             if( rotationAngleHead >= 0 && rotationAngleHead < maxRotationAngleHead) {
-                rotationAngleHead += rotationSpeed;
+                rotationAngleHead += rotationSpeed * delta;
                 
             }
             else if(rotationAngleHead >= maxRotationAngleHead) {
@@ -402,34 +404,32 @@ function update(){
            
         }
         if(positionTrailerX < -1 ){
-            positionTrailerX += translationTrailerSpeed;
-            trailerBoxMin.x += translationTrailerSpeed;
-            trailerBoxMax.x += translationTrailerSpeed;
+            positionTrailerX += translationTrailerSpeed * delta;
+            trailerBoxMin.x += translationTrailerSpeed * delta;
+            trailerBoxMax.x += translationTrailerSpeed * delta;
      
         }
         if(positionTrailerX > 1 ){
-            positionTrailerX -= translationTrailerSpeed;
-            trailerBoxMin.x -= translationTrailerSpeed;
-            trailerBoxMax.x -= translationTrailerSpeed;
+            positionTrailerX -= translationTrailerSpeed * delta;
+            trailerBoxMin.x -= translationTrailerSpeed * delta;
+            trailerBoxMax.x -= translationTrailerSpeed * delta;
         }
         
         if(positionTrailerZ < 135 ){
-            positionTrailerZ += translationTrailerSpeed;
-            trailerBoxMin.z += translationTrailerSpeed;
-            trailerBoxMax.z += translationTrailerSpeed;
+            positionTrailerZ += translationTrailerSpeed * delta;
+            trailerBoxMin.z += translationTrailerSpeed * delta;
+            trailerBoxMax.z += translationTrailerSpeed * delta;
         }
         if(positionTrailerZ > 133 ){
-            positionTrailerZ -= translationTrailerSpeed;
-            trailerBoxMin.z -= translationTrailerSpeed;
-            trailerBoxMax.z -= translationTrailerSpeed;
+            positionTrailerZ -= translationTrailerSpeed * delta;
+            trailerBoxMin.z -= translationTrailerSpeed * delta;
+            trailerBoxMax.z -= translationTrailerSpeed * delta;
         }
           
 
         
     }
     console.log(animation);
-
-
 }
 
 /////////////
@@ -450,7 +450,7 @@ function init() {
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-
+    
     createScene();
     createFrontCamera();
     createLateralCamera();
@@ -470,6 +470,8 @@ function init() {
 /////////////////////
 function animate() {
     'use strict';
+    delta = clock.getDelta();
+    console.log(delta);
     update();
     checkCollisions()
     head_axis.rotation.x = rotationAngleHead;
