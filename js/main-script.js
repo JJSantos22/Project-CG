@@ -26,6 +26,7 @@ var moveLeft = false;
 var moveUp = false;
 var moveDown = false;
 var change_color_state = false;
+var color_already_changed = false;
 var wire = true;
 var truck_mode = false;
 var animation = false;
@@ -63,13 +64,6 @@ const truckBoxMax = new THREE.Vector3(50, 0, 130);
 var trailerBoxMin = new THREE.Vector3(-45, 0, 155);
 var trailerBoxMax = new THREE.Vector3(45, 0, 325);
 
-var immovableWireframe = new THREE.Box3Helper(new THREE.Box3(truckBoxMin, truckBoxMax), 0xFF0000);
-immovableWireframe.visible = false;
-
-
-var movableWireframe = new THREE.Box3Helper(new THREE.Box3(trailerBoxMin, trailerBoxMax), 0x00FF00);
-movableWireframe.visible = false;
-
 /////////////////////
 /* CREATE SCENE(S) */
 /////////////////////
@@ -83,8 +77,6 @@ function createScene() {
     main_axis = (new THREE.AxisHelper(0));
     scene.add(main_axis);
 
-    scene.add(immovableWireframe);
-    scene.add(movableWireframe);
     createTorso();
     createLegs();
     createHead();
@@ -172,8 +164,6 @@ function createOrtographicCamera(){
     camera[4].lookAt(scene.position.x + 20, scene.position.y, scene.position.z + 20);
 }
 
-
-
 /////////////////////
 /* CREATE LIGHT(S) */
 /////////////////////
@@ -250,17 +240,18 @@ function checkCollisions(){
 function update(){
     'use strict';
 
+    if (change_color_state && !color_already_changed){
+        dark_grey.wireframe = !wire;
+        red.wireframe = !wire;
+        black.wireframe = !wire;
+        blue.wireframe = !wire;
+        grey.wireframe = !wire;
+        light_grey.wireframe = !wire;
+        wire = !wire;
+        color_already_changed = true;
+    }
+
     if(!animation){
-        if (change_color_state){
-            dark_grey.wireframe = !wire;
-            red.wireframe = !wire;
-            black.wireframe = !wire;
-            blue.wireframe = !wire;
-            grey.wireframe = !wire;
-            light_grey.wireframe = !wire;
-            wire = !wire;
-            change_color_state = false;
-        }
         if(rotationAngleFeet == maxRotationAngleFeet && rotationAngleLegs == maxRotationAngleLegs && rotationAngleHead == maxRotationAngleHead && positionArms == maxTranslationArms){
             truck_mode = true;
         }
@@ -439,11 +430,8 @@ function animate() {
     
     trailer_axis.position.x = positionTrailerX;
     trailer_axis.position.z = positionTrailerZ;
-    immovableWireframe.box.set(truckBoxMin, truckBoxMax);
 
-    movableWireframe.box.set(trailerBoxMin, trailerBoxMax);
     render();
-    // Call the animate function recursively
     requestAnimationFrame(animate);
 }
 
@@ -459,76 +447,77 @@ function onResize() {
 ///////////////////////
 function onKeyDown(e) {
     'use strict';
+    
     switch (e.keyCode) {
-        // Left arrow key
+        // Left Arrow Key
         case 37:  
             moveLeft = true;
             break;
-        // Up arrow key
+        // Up Arrow Key
         case 38: 
             moveUp = true;
             break;
-        // Right arrow key
+        // Right Arrow Key
         case 39: 
             moveRight = true;
             break;
-        // Down arrow key
+        // Down Arrow Key
         case 40: 
             moveDown = true;
             break;
-        //1
+        // 1 - Change camera to Front View
         case 49: 
             switch_camera(0);
             break;
-        //2
+        // 2 - Change camera to Lateral View
         case 50:  
             switch_camera(1);
             break;
-        //3
+        // 3 - Change camera to Top View
         case 51:  
             switch_camera(2);
             break;
-        //4
+        // 4 - Change camera to Isometric Ortographic Projection
         case 52:  
             switch_camera(3);
             break;
-        //5
+        // 5 - Change camera to Isometric Perspective Projection
         case 53:  
             switch_camera(4);
             break;
-        //6
+        // 6 - Change Wire
         case 54:  
             change_color_state = true;
             break;
-        // Q -Feet
+        // Q -Feet Up
         case 81:
            feetUp = true;
            break;
-        // A - Feet
+        // A - Feet Down
         case 65:
             feetDown = true;
             break;
-        // W - Legs
+        // W - Legs Up
         case 87:
            legsUp = true;
            break;
-        // S - Legs
+        // S - Legs Down
         case 83:
             legsDown = true;
             break;
-        //  E - Arms
+        //  E - Arms Out
         case 69 :
             armsOut = true;
             break;
-        // D - Arms
+        // D - Arms In
         case 68:
             armsIn = true;
             break;
-        // R - Head
+        // R - Head Up
         case 82:
             headUp = true;
             break;
-        // F - Head
+        // F - Head Down
         case 70:
             headDown = true;
             break  
@@ -542,46 +531,59 @@ function onKeyUp(e){
     'use strict';
 
     switch (e.keyCode) {
-        case 37:  // Left arrow key
+        // Left Arrow Key
+        case 37:  
             moveLeft = false;
             break;
-        case 38: // Up arrow key
+        // Up Arrow Key
+        case 38: 
             moveUp = false;
             break;
-        case 39: // Right arrow key
+        // Right Arrow Key
+        case 39: 
             moveRight = false;
             break;
-        case 40: // Down arrow key
+        // Down Arrow Key
+        case 40: 
             moveDown = false;
             break;
+        // Q - Feet Up
         case 81:
            feetUp = false;
            break;
-        // A - Feet
+        // A - Feet Down
         case 65:
             feetDown = false;
             break;
+        // W - Legs Up
         case 87:
             legsUp = false;
             break;
-            // S - Legs
+        // S - Legs Down
         case 83:
             legsDown = false;
             break;
+        //  E - Arms Out
         case 69 :
             armsOut = false;
             break;
-        // D - Arms
+        // D - Arms In
         case 68:
             armsIn = false;
             break;
+        // R - Head Up
         case 82:
             headUp = false;
             break;
-        // F - Head
+        // F - Head Down
         case 70:
             headDown = false;
             break
+        // 6 - Change Wire
+        case 54:
+            change_color_state = false;
+            color_already_changed = false;
+            break;
     }
 }
 
