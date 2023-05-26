@@ -54,19 +54,21 @@ var maxRotationAngleLegs = -Math.PI/2;
 var maxRotationAngleFeet = -Math.PI;
 var maxTranslationArms = 15;
 var positionTrailerX = 0;
-var positionTrailerZ = 350;
+var positionTrailerZ = 240;
 
 const truckBoxMin = new THREE.Vector3(-50, 0, -15);
 
 const truckBoxMax = new THREE.Vector3(50, 0, 130);
 
-var trailerBoxMin = new THREE.Vector3(-45, 0, 265);
-var trailerBoxMax = new THREE.Vector3(45, 0, 435);
+var trailerBoxMin = new THREE.Vector3(-45, 0, 155);
+var trailerBoxMax = new THREE.Vector3(45, 0, 325);
 
-var immovableWireframe = new THREE.Box3Helper(new THREE.Box3(truckBoxMin, truckBoxMax), 0x00ff00);
+var immovableWireframe = new THREE.Box3Helper(new THREE.Box3(truckBoxMin, truckBoxMax), 0xFF0000);
+immovableWireframe.visible = false;
 
 
-var movableWireframe = new THREE.Box3Helper(new THREE.Box3(trailerBoxMin, trailerBoxMax), 0xff0000);
+var movableWireframe = new THREE.Box3Helper(new THREE.Box3(trailerBoxMin, trailerBoxMax), 0x00FF00);
+movableWireframe.visible = false;
 
 /////////////////////
 /* CREATE SCENE(S) */
@@ -78,7 +80,7 @@ function createScene() {
 
     scene.background = new THREE.Color(0xf7e1aa);
 
-    main_axis = (new THREE.AxisHelper(10));
+    main_axis = (new THREE.AxisHelper(0));
     scene.add(main_axis);
 
     scene.add(immovableWireframe);
@@ -121,8 +123,8 @@ function createLateralCamera(){
     height / -4, 
     1, 1000 
     );
-    camera[1].position.set(-200, 0, 0); 
-    camera[1].lookAt(scene.position);
+    camera[1].position.set(-200, 0, 150); 
+    camera[1].lookAt(scene.position.x, scene.position.y, scene.position.z + 150);
 }
 
 function createTopCamera(){
@@ -137,20 +139,21 @@ function createTopCamera(){
     height / -4, 
     1, 1000 
     );
-    camera[2].position.set(0, 200, 90); 
-    camera[2].lookAt(scene.position.x, scene.position.y, scene.position.z + 90);
+    camera[2].position.set(0, 200, 150); 
+    camera[2].lookAt(scene.position.x, scene.position.y, scene.position.z + 150);
 }
 
 function createPerspectiveCamera() {
     'use strict';
+    
     camera[3] = new THREE.PerspectiveCamera(100,
                                          window.innerWidth / window.innerHeight,
                                          1,
                                          1000);
-    camera[3].position.x = -150;
+    camera[3].position.x = -120;
     camera[3].position.y = 150;
-    camera[3].position.z = -150;
-    camera[3].lookAt(scene.position);
+    camera[3].position.z = -120;
+    camera[3].lookAt(scene.position.x, scene.position.y, scene.position.z);
 }
 
 function createOrtographicCamera(){
@@ -165,8 +168,8 @@ function createOrtographicCamera(){
     height / -3, 
     1, 1000 
     );
-    camera[4].position.set(-100, 150, -100); 
-    camera[4].lookAt(scene.position);
+    camera[4].position.set(-120, 170, -120); 
+    camera[4].lookAt(scene.position.x + 20, scene.position.y, scene.position.z + 20);
 }
 
 
@@ -264,25 +267,27 @@ function update(){
         else{
             truck_mode = false;
         }
-        if(moveUp){
-            positionTrailerZ -= translationTrailerSpeed * delta;
-            trailerBoxMin.z -= translationTrailerSpeed * delta;
-            trailerBoxMax.z -= translationTrailerSpeed * delta;
-        }
-        if(moveDown){
-            positionTrailerZ += translationTrailerSpeed * delta;
-            trailerBoxMin.z += translationTrailerSpeed * delta;
-            trailerBoxMax.z += translationTrailerSpeed * delta;
-        }
-        if(moveLeft){
-            positionTrailerX -= translationTrailerSpeed * delta;
-            trailerBoxMin.x -= translationTrailerSpeed * delta;
-            trailerBoxMax.x -= translationTrailerSpeed * delta;
-        }
-        if(moveRight){
-            positionTrailerX += translationTrailerSpeed * delta;
-            trailerBoxMin.x += translationTrailerSpeed * delta;
-            trailerBoxMax.x += translationTrailerSpeed * delta;
+        if (!truck_mode || positionTrailerX != 0 || positionTrailerZ != 134){
+            if(moveUp){
+                positionTrailerZ -= translationTrailerSpeed * delta;
+                trailerBoxMin.z -= translationTrailerSpeed * delta;
+                trailerBoxMax.z -= translationTrailerSpeed * delta;
+            }
+            if(moveDown){
+                positionTrailerZ += translationTrailerSpeed * delta;
+                trailerBoxMin.z += translationTrailerSpeed * delta;
+                trailerBoxMax.z += translationTrailerSpeed * delta;
+            }
+            if(moveLeft){
+                positionTrailerX -= translationTrailerSpeed * delta;
+                trailerBoxMin.x -= translationTrailerSpeed * delta;
+                trailerBoxMax.x -= translationTrailerSpeed * delta;
+            }
+            if(moveRight){
+                positionTrailerX += translationTrailerSpeed * delta;
+                trailerBoxMin.x += translationTrailerSpeed * delta;
+                trailerBoxMax.x += translationTrailerSpeed * delta;
+            }
         }
         if(feetUp){
             if (rotationAngleFeet < 0 && rotationAngleFeet >= maxRotationAngleFeet){
@@ -609,13 +614,13 @@ function createLegs() {
     leg_axis = new THREE.Object3D();
     leg_axis.position.set(0, 2.5 + 12.5, 0);
     main_axis.add(leg_axis);
-    var axis_helper = new THREE.AxisHelper(10);
+    var axis_helper = new THREE.AxisHelper(0);
     leg_axis.add(axis_helper);
 
     foot_axis = new THREE.Object3D();
     foot_axis.position.set(0, -30 - 70 - 7.5 - 2.5, - 10);
     leg_axis.add(foot_axis);
-    var axis_helper = new THREE.AxisHelper(10);
+    var axis_helper = new THREE.AxisHelper(0);
     foot_axis.add(axis_helper);
 
     addThighs(leg_axis);
@@ -631,7 +636,7 @@ function createHead() {
     head_axis = new THREE.Object3D();
     head_axis.position.set(0, 7.5 + 25 + 40 - 0.1 + 12.5, 5); 
     main_axis.add(head_axis);
-    var axis_helper = new THREE.AxisHelper(10);
+    var axis_helper = new THREE.AxisHelper(0);
     head_axis.add(axis_helper);
 
     addHead(head_axis);
@@ -646,7 +651,7 @@ function createArms() {
     arm_axis2.position.set(0, 7.5 + 25 + 12.5, 0);
     main_axis.add(arm_axis1);
     main_axis.add(arm_axis2);
-    var axis_helper = new THREE.AxisHelper(10);
+    var axis_helper = new THREE.AxisHelper(0);
     arm_axis1.add(axis_helper);
     arm_axis2.add(axis_helper);
 
@@ -782,9 +787,9 @@ function createTrailer() {
     'use strict';
 
     trailer_axis = new THREE.Object3D();
-    trailer_axis.position.set(0, 0, 350);
+    trailer_axis.position.set(0, 0, 240);
     main_axis.add(trailer_axis);
-    var axis_helper = new THREE.AxisHelper(20); 
+    var axis_helper = new THREE.AxisHelper(0); 
     trailer_axis.add(axis_helper);
 
     addBox(trailer_axis);
