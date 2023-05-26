@@ -362,10 +362,6 @@ function update(){
             trailerBoxMin.z = 49;
             trailerBoxMax.x = 45;
             trailerBoxMax.z = 220;
-            console.log("trailerBoxMinx: " + trailerBoxMin.x);
-            console.log("trailerBoxMinz: " + trailerBoxMin.z);
-            console.log("trailerBoxMaxx: " + trailerBoxMax.x);
-            console.log("trailerBoxMaxz: " + trailerBoxMax.z);
         }
         if(positionTrailerX < -1 ){
             positionTrailerX += translationTrailerSpeed * delta;
